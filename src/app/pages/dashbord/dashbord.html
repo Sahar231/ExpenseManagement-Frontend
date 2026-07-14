@@ -22,6 +22,12 @@
           <a routerLink="/dashboard/frais/create" class="nav-link text-white-50 py-2">➕ Create Frais</a>
           <a routerLink="/dashboard/frais/liste" class="nav-link text-white-50 py-2">📋 Liste des Frais</a>
         </div>
+        <!-- NOUVEAU LIEN POUR LE MANAGER UNIQUEMENT -->
+          <a *ngIf="userRole === 'Manager'" 
+             routerLink="/dashboard/frais/validation" 
+             class="nav-link text-warning py-2">
+             ✅ Validation des Frais
+          </a>
       </div>
     </div>
     

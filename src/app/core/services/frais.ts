@@ -44,4 +44,28 @@ export class FraisService {
   supprimer(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`).pipe(catchError(this.handleError));
 }
+getFraisAValider(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/validation`)
+    .pipe(catchError(this.handleError));
+}
+
+approuverFrais(id: number): Observable<any> {
+  return this.http.post(
+    `${this.apiUrl}/${id}/approve`,
+    {}
+  ).pipe(catchError(this.handleError));
+}
+
+rejeterFrais(id: number, comment: string): Observable<any> {
+  return this.http.post(
+    `${this.apiUrl}/${id}/reject`,
+    {
+      comment: comment
+    }
+  ).pipe(catchError(this.handleError));
+}
+getDetailsFrais(id: number): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/${id}/details`)
+    .pipe(catchError(this.handleError));
+}
 }

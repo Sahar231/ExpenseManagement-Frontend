@@ -106,9 +106,9 @@ voirDetails(f: any) {
   }
 
   // Helpers pour les boutons
-  isModifierDisabled(statut: string): boolean { return !['Brouillon', 'Rejeté'].includes(statut); }
+  isModifierDisabled(statut: string): boolean { return !['Brouillon', 'Rejected'].includes(statut); }
   isSupprimerDisabled(statut: string): boolean { return statut !== 'Brouillon'; }
-  isSoumettreDisabled(statut: string): boolean { return !['Brouillon', 'Rejeté'].includes(statut); }
+  isSoumettreDisabled(statut: string): boolean { return !['Brouillon', 'Rejected'].includes(statut); }
   
 
 

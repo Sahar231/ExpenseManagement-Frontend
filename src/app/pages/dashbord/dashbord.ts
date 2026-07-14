@@ -22,6 +22,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.chargerProfilUtilisateur();
   }
+  
 
   // Chargement des informations utilisateur reçues via l'authentification JWT
   chargerProfilUtilisateur(): void {
