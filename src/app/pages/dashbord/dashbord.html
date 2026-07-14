@@ -1,0 +1,47 @@
+<div class="d-flex" style="min-height: 100vh;">
+  
+ 
+  <div class="sidebar text-white" style="width: 250px; background-color: #1e7e4e;">
+    <div class="p-3 text-center border-bottom border-white-20">
+      <h3>{{ userRole }} </h3>
+    </div>
+    
+    
+    <div class="nav flex-column mt-3">
+      <a routerLink="/dashboard" class="nav-link text-white py-3 px-4">Dashboard</a>
+      
+      
+      <div class="nav-item">
+        <a class="nav-link text-white d-flex align-items-center justify-content-between py-3 px-4" 
+           (click)="toggleExpenses()" style="cursor: pointer;">
+          <span><i class="bi bi-wallet2 me-2"></i> Expenses</span>
+          <i class="bi" [ngClass]="isExpensesOpen ? 'bi-chevron-down' : 'bi-chevron-right'"></i>
+        </a>
+        
+        <div *ngIf="isExpensesOpen" class="ps-4" style="background-color: #165c39;">
+          <a routerLink="/dashboard/frais/create" class="nav-link text-white-50 py-2">➕ Create Frais</a>
+          <a routerLink="/dashboard/frais/liste" class="nav-link text-white-50 py-2">📋 Liste des Frais</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Bouton Log Out l-louta -->
+    <div class="mt-auto p-3 w-100">
+      <button class="btn btn-light w-100" (click)="onLogout()">Log Out</button>
+    </div>
+  </div>
+
+  <!-- 2. EL CONTENU DYNAMIQUE (Hna el 7asyl el lkol!) -->
+  <div class="flex-grow-1 bg-light">
+    <!-- Navbar sghira lfo9 ken t7eb (Nom de l'utilisateur, etc.) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3">
+      <span class="navbar-brand mb-0 h1 text-secondary">Bienvenue, {{ userName }}</span>
+    </nav>
+
+    
+    <div class="p-4">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+</div>

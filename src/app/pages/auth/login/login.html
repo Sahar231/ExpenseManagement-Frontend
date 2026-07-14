@@ -1,0 +1,60 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card p-4 shadow-lg" style="width: 100%; max-width: 450px; border-radius: 15px;">
+    
+    <div class="text-center mb-4">
+      <h2 class="fw-bold text-success">Connexion</h2>
+      <p class="text-muted">Accédez à votre espace collaborateur</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger text-center p-2" style="font-size: 14px;">
+      {{ errorMessage }}
+    </div>
+
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+      
+      <div class="mb-3">
+        <label class="form-label">Adresse Email</label>
+        <input 
+          type="text" 
+          name="email" 
+          [(ngModel)]="credentials.email" 
+          #emailRef="ngModel"
+          required 
+          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+          class="form-control" 
+          placeholder="exemple@entreprise.com">
+        
+        <div *ngIf="emailRef.invalid && (emailRef.dirty || emailRef.touched)" class="text-danger mt-1" style="font-size: 13px;">
+          <small *ngIf="emailRef.errors?.['required']">L'adresse email est obligatoire.</small>
+          <small *ngIf="emailRef.errors?.['pattern']">Format email invalide.</small>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label">Mot de passe</label>
+        <input 
+          type="password" 
+          name="password" 
+          [(ngModel)]="credentials.password" 
+          #passRef="ngModel"
+          required 
+          class="form-control" 
+          placeholder="********">
+        
+        <div *ngIf="passRef.invalid && (passRef.dirty || passRef.touched)" class="text-danger mt-1" style="font-size: 13px;">
+          <small *ngIf="passRef.errors?.['required']">Le mot de passe est obligatoire.</small>
+        </div>
+      </div>
+
+      <button class="btn btn-success w-100 py-2 mb-3" type="submit" [disabled]="loginForm.invalid">
+        Se connecter
+      </button>
+
+      <div class="text-center">
+        <span class="text-muted">Pas encore de compte ? </span>
+        <a routerLink="/signup" class="text-success text-decoration-none fw-bold">S'inscrire</a>
+      </div>
+    </form>
+
+  </div>
+</div>

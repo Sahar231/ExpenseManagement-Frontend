@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "expense-portal": {
+    "FraisMissionFront": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -25,8 +25,13 @@
               }
             ],
             "styles": [
-              "src/styles.css"
-            ]
+  "node_modules/bootstrap/dist/css/bootstrap.min.css",
+  "node_modules/bootstrap-icons/font/bootstrap-icons.css",
+  "src/styles.css"
+],
+"scripts": [
+  "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+]
           },
           "configurations": {
             "production": {
@@ -56,10 +61,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "expense-portal:build:production"
+              "buildTarget": "FraisMissionFront:build:production"
             },
             "development": {
-              "buildTarget": "expense-portal:build:development"
+              "buildTarget": "FraisMissionFront:build:development"
             }
           },
           "defaultConfiguration": "development"

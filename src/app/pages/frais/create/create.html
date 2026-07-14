@@ -1,0 +1,58 @@
+<div class="container-fluid pt-4 px-4">
+  <div class="card shadow-sm border-0" style="border-radius: 8px; overflow: hidden;">
+    
+    <div class="card-header text-white px-4 py-3" style="background-color: #1e7e4e; font-size: 1.35rem; font-weight: 600;">
+      Créer un Frais
+    </div>
+
+    <div class="card-body p-4 bg-white">
+      <form (ngSubmit)="registrarFrais()" #fForm="ngForm">
+        <div class="row g-4">
+          
+          <div class="col-md-6">
+            <label class="form-label text-secondary fw-semibold">Mission</label>
+            <select class="form-select py-2" [(ngModel)]="formModel.missionId" name="missionId" required style="border-radius: 6px;">
+              <option [ngValue]="0" disabled>Choisir une mission...</option>
+              <option *ngFor="let m of missions" [ngValue]="m.id">{{ m.nom }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-secondary fw-semibold">Catégorie</label>
+            <select class="form-select py-2" [(ngModel)]="formModel.categorie" name="categorie" style="border-radius: 6px;">
+              <option value="Repas">Repas</option>
+              <option value="Transport">Transport</option>
+              <option value="Logement">Logement</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-secondary fw-semibold">Montant (DT)</label>
+            <input type="number" class="form-control py-2" [(ngModel)]="formModel.montant" name="montant" required placeholder="0.00" style="border-radius: 6px;">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-secondary fw-semibold">Date</label>
+            <input type="date" class="form-control py-2" [(ngModel)]="formModel.date" name="date" required style="border-radius: 6px;">
+          </div>
+
+          <div class="col-12">
+            <label class="form-label text-secondary fw-semibold">Commentaire / Remarque (Optionnel)</label>
+            <textarea class="form-control" [(ngModel)]="formModel.commentaire" name="commentaire" rows="3" placeholder="Ajouter des détails..." style="border-radius: 6px;"></textarea>
+          </div>
+
+          <div class="col-12 mt-4">
+            <button type="submit" class="btn text-white me-2 px-4 py-2" [disabled]="!fForm.valid || formModel.missionId === 0" style="background-color: #5bb389; border-radius: 6px; font-weight: 500;">
+              Enregistrer
+            </button>
+            <button type="button" class="btn text-white px-4 py-2" (click)="reinitialiserFormulaire()" style="background-color: #6c757d; border-radius: 6px; font-weight: 500;">
+              Annuler
+            </button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
