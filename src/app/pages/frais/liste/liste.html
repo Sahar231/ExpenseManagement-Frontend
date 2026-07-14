@@ -130,65 +130,128 @@
       </div>
 
       <!-- Modal Suppression -->
-      <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Confirmer la suppression</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-              Êtes-vous sûr de vouloir supprimer cette note de frais ?
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-              <button class="btn btn-danger" (click)="confirmDelete()">Supprimer</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-
-  <!-- Ajoutez ce bloc tout en bas de votre fichier HTML -->
-<div class="modal fade" id="viewModal" tabindex="-1">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
+
       <div class="modal-header">
-        <h5 class="modal-title">Détails de la note de frais</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      
-      <!-- Votre contenu ici -->
-      <div class="modal-body" *ngIf="fraisToView">
-        <h6 class="text-primary border-bottom pb-2">Informations de la Mission</h6>
-        <p><strong>Mission :</strong> {{ fraisToView.missionNom }}</p>
-        <p><strong>Lieu :</strong> {{ fraisToView.missionLieu }}</p>
-        <p><strong>Date :</strong> {{ fraisToView.missionDate | date:'dd/MM/yyyy' }}</p>
+        <h5 class="modal-title">Confirmer la suppression</h5>
 
-        <h6 class="text-primary border-bottom pb-2 mt-3">Responsable</h6>
-        <p><strong>Nom :</strong> {{ fraisToView.employeeNom }}</p>
-<p><strong>Prénom :</strong> {{ fraisToView.employeePrenom }}</p>
-<p><strong>Email :</strong> {{ fraisToView.employeeEmail }}</p>
-
-        <hr>
-        <h6 class="text-primary border-bottom pb-2">Détails du Frais</h6>
-        <p><strong>Catégorie :</strong> {{ fraisToView.categorie }}</p>
-        <p><strong>Montant :</strong> {{ fraisToView.montant | number:'1.2-2' }} €</p>
-        <p><strong>Commentaire :</strong> {{ fraisToView.commentaire || 'Aucun commentaire' }}</p>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal">
+        </button>
       </div>
-      
+
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir supprimer cette note de frais ?
+      </div>
+
       <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal">
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmDelete()">
+          Supprimer
+        </button>
       </div>
+
     </div>
   </div>
 </div>
 
+<!-- Modal Détails -->
+<div class="modal fade" id="viewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
 
+      <div class="modal-header">
+        <h5 class="modal-title">Détails de la note de frais</h5>
 
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal">
+        </button>
+      </div>
 
+      <div class="modal-body" *ngIf="fraisToView">
 
+        <h6 class="text-primary border-bottom pb-2">
+          Informations de la mission
+        </h6>
 
+        <p>
+          <strong>Mission :</strong>
+          {{ fraisToView.missionNom }}
+        </p>
+
+        <p>
+          <strong>Lieu :</strong>
+          {{ fraisToView.missionLieu }}
+        </p>
+
+        <p>
+          <strong>Date :</strong>
+          {{ fraisToView.missionDate | date:'dd/MM/yyyy' }}
+        </p>
+
+        <h6 class="text-primary border-bottom pb-2 mt-4">
+          Responsable
+        </h6>
+
+        <p>
+          <strong>Nom :</strong>
+          {{ fraisToView.employeeNom }}
+        </p>
+
+        <p>
+          <strong>Prénom :</strong>
+          {{ fraisToView.employeePrenom }}
+        </p>
+
+        <p>
+          <strong>Email :</strong>
+          {{ fraisToView.employeeEmail }}
+        </p>
+
+        <h6 class="text-primary border-bottom pb-2 mt-4">
+          Détails du frais
+        </h6>
+
+        <p>
+          <strong>Catégorie :</strong>
+          {{ fraisToView.categorie }}
+        </p>
+
+        <p>
+          <strong>Montant :</strong>
+          {{ fraisToView.montant | number:'1.2-2' }} €
+        </p>
+
+        <p>
+          <strong>Commentaire :</strong>
+          {{ fraisToView.commentaire || 'Aucun commentaire' }}
+        </p>
+
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal">
+          Fermer
+        </button>
+      </div>
 
     </div>
   </div>
