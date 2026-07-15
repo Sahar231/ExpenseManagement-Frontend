@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { FraisService } from '../../../core/services/frais';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 
 declare var bootstrap: any;
 
@@ -12,6 +13,7 @@ declare var bootstrap: any;
   templateUrl: './liste.html'
 })
 export class ListeComponent implements OnInit {
+  @ViewChild('detailsModalRef') detailsModalRef!: ElementRef;
   mesFrais: any[] = [];
   missions: any[] = [];
   
@@ -20,7 +22,7 @@ export class ListeComponent implements OnInit {
   fraisToEdit: any = {};
   fraisToView: any = null;
   idToDelete: number | null = null;
-
+   selectedFrais: any = null;
   constructor(
     private fraisService: FraisService, 
     private cdr: ChangeDetectorRef 
@@ -65,15 +67,7 @@ export class ListeComponent implements OnInit {
     modal.show();
   }
 
-  saveCreate() {
-    this.fraisService.creerFrais(this.fraisToCreate).subscribe({
-      next: () => {
-        this.chargerFrais();
-        bootstrap.Modal.getInstance(document.getElementById('createModal')).hide();
-      },
-      error: (err) => alert('Erreur : ' + (err.error?.message || 'Action impossible'))
-    });
-  }
+  
 
   // --- MODIFICATION ---
   modifier(f: any) {
@@ -82,15 +76,7 @@ export class ListeComponent implements OnInit {
     modal.show();
   }
 
-  saveEdit() {
-    this.fraisService.modifier(this.fraisToEdit.id, this.fraisToEdit).subscribe({
-      next: () => {
-        this.chargerFrais();
-        bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
-      },
-      error: (err) => alert('Erreur : ' + (err.error?.message || 'Action impossible'))
-    });
-  }
+  
   
   // --- DÉTAILS ---
   voirDetails(f: any) {
@@ -106,26 +92,77 @@ export class ListeComponent implements OnInit {
     modal.show();
   }
 
-  confirmDelete() {
-    if (this.idToDelete) {
-      this.fraisService.supprimer(this.idToDelete).subscribe({
-        next: () => {
-          this.chargerFrais();
-          bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-        },
-        error: (err) => alert('Erreur : ' + (err.error?.message || 'Action impossible'))
-      });
-    }
-  }
+  
 
-  // --- SOUMISSION ---
-  soumettre(id: number) {
-    this.fraisService.soumettre(id).subscribe({
+  
+  // --- CRÉATION ---
+saveCreate() {
+  this.fraisService.creerFrais(this.fraisToCreate).subscribe({
+    next: () => {
+      this.chargerFrais();
+      bootstrap.Modal.getInstance(document.getElementById('createModal')).hide();
+      alert('Succès : Votre frais a été enregistré en tant que brouillon.');
+    },
+    error: (err) => alert('Erreur : ' + (err.error?.message || 'Impossible de créer le frais'))
+  });
+}
+
+// --- MODIFICATION ---
+saveEdit() {
+  this.fraisService.modifier(this.fraisToEdit.id, this.fraisToEdit).subscribe({
+    next: () => {
+      this.chargerFrais();
+      bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+      alert('Succès : La modification de votre frais a été enregistrée.');
+    },
+    error: (err) => alert('Erreur : ' + (err.error?.message || 'Modification impossible'))
+  });
+}
+
+// --- SOUMISSION ---
+soumettre(id: number) {
+  this.fraisService.soumettre(id).subscribe({
+    next: () => {
+      this.chargerFrais();
+      alert('Succès : Votre frais a été soumis avec succès et est en attente de validation par le manager.');
+    },
+    error: (err) => alert('Erreur : ' + (err.error?.message || 'La soumission a échoué'))
+  });
+}
+
+// --- SUPPRESSION ---
+confirmDelete() {
+  if (this.idToDelete) {
+    this.fraisService.supprimer(this.idToDelete).subscribe({
       next: () => {
-        alert('Frais soumis avec succès !');
         this.chargerFrais();
+        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+        alert('Succès : Le frais a été supprimé de votre liste.');
       },
-      error: (err) => alert('Erreur : ' + (err.error?.message || 'Action impossible'))
+      error: (err) => alert('Erreur : ' + (err.error?.message || 'Suppression impossible'))
     });
   }
+}
+
+
+voir(id: number) {
+  this.fraisService.getDetailsFrais(id).subscribe({
+    next: (data) => {
+      this.selectedFrais = data;
+      // Utilise la référence ici
+      const modal = new bootstrap.Modal(this.detailsModalRef.nativeElement);
+      modal.show();
+    },
+    error: (err) => console.error('Erreur chargement détails', err)
+  });
+}
+
+// Récupérer le dernier commentaire de rejet depuis Approvals
+getDernierCommentaireRejet(): string {
+  if (!this.selectedFrais?.approvals) return 'Aucun commentaire.';
+  const rejet = this.selectedFrais.approvals
+    .filter((a: any) => a.status === 'Rejected')
+    .pop();
+  return rejet ? rejet.comment : 'Aucun motif précisé.';
+}
 }

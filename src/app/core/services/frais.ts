@@ -71,8 +71,12 @@ rejeterFrais(id: number, comment: string): Observable<any> {
     catchError(this.handleError)
   );
 }
-getDetailsFrais(id: number): Observable<any> {
-  return this.http.get<any>(`${this.apiUrl}/${id}/details`)
-    .pipe(catchError(this.handleError));
-}
+// --- MÉTHODES EXISTANTES ---
+  getDetailsFrais(id: number): Observable<any> {
+   
+    return this.http.get<any>(`${this.apiUrl}/${id}/details-employe`)
+      .pipe(catchError(this.handleError));
+  }
+
+  
 }

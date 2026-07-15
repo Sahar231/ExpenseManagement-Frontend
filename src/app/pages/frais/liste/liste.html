@@ -36,13 +36,34 @@
               }">{{ f.statut }}</span>
             </td>
             <td class="text-end px-4">
-              <div class="btn-group">
-                <button class="btn btn-sm btn-outline-info me-1" (click)="voirDetails(f)" title="Voir"><i class="bi bi-eye"></i></button>
-                <button class="btn btn-sm btn-outline-primary me-1" [disabled]="!['Brouillon', 'Rejected'].includes(f.statut)" (click)="modifier(f)">Modifier</button>
-                <button class="btn btn-sm btn-outline-danger me-1" [disabled]="f.statut !== 'Brouillon'" (click)="openDeleteModal(f.id)">Supprimer</button>
-                <button class="btn btn-sm btn-outline-success" [disabled]="!['Brouillon', 'Rejected'].includes(f.statut)" (click)="soumettre(f.id)">Soumettre</button>
-              </div>
-            </td>
+  <div class="btn-group">
+    <!-- Voir -->
+    <button class="btn btn-sm btn-outline-info me-1" (click)="voir(f.id)" title="Voir">
+      <i class="bi bi-eye"></i>
+    </button>
+
+    <!-- Modifier -->
+    <button class="btn btn-sm btn-outline-primary me-1" 
+            [disabled]="!['Brouillon', 'Rejected'].includes(f.statut)" 
+            (click)="modifier(f)" title="Modifier">
+      <i class="bi bi-pencil-square"></i>
+    </button>
+
+    <!-- Supprimer -->
+    <button class="btn btn-sm btn-outline-danger me-1" 
+            [disabled]="f.statut !== 'Brouillon'" 
+            (click)="openDeleteModal(f.id)" title="Supprimer">
+      <i class="bi bi-trash"></i>
+    </button>
+
+    <!-- Soumettre -->
+    <button class="btn btn-sm btn-outline-success" 
+            [disabled]="!['Brouillon', 'Rejected'].includes(f.statut)" 
+            (click)="soumettre(f.id)" title="Soumettre">
+      <i class="bi bi-send"></i>
+    </button>
+  </div>
+</td>
           </tr>
           <tr *ngIf="mesFrais.length === 0">
             <td colspan="6" class="text-center py-4 text-muted">Aucune note de frais enregistrée.</td>
@@ -164,22 +185,30 @@
 </div>
 
 <!-- Modal Détails -->
-<div class="modal fade" id="viewModal" tabindex="-1">
+<!-- Utilise #detailsModalRef pour la référence et garde un ID fixe -->
+<!-- Modale Détails (remplace ton ancienne div id="detailsModal") -->
+<div class="modal fade" #detailsModalRef id="detailsModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Détails de la note</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-content" *ngIf="selectedFrais">
+      <div class="modal-header text-white" style="background-color: #1e7e4e;">
+        <h5 class="modal-title">Détails de ma demande</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body" *ngIf="fraisToView">
-        <p><strong>Mission :</strong> {{ fraisToView.missionNom }}</p>
-        <p><strong>Catégorie :</strong> {{ fraisToView.categorie }}</p>
-        <p><strong>Montant :</strong> {{ fraisToView.montant | number:'1.2-2' }} DT</p>
-        <p><strong>Date :</strong> {{ fraisToView.date | date:'dd/MM/yyyy' }}</p>
-        <p><strong>Commentaire :</strong> {{ fraisToView.commentaire || 'Aucun' }}</p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      <div class="modal-body">
+        <p><strong>Mission :</strong> {{ selectedFrais.mission?.nom }}</p>
+        <hr>
+        <h6>Responsable de mission :</h6>
+        <p>{{ selectedFrais.mission?.manager?.nom }} {{ selectedFrais.mission?.manager?.prenom }} 
+           <br><small class="text-muted">{{ selectedFrais.mission?.manager?.email }}</small>
+        </p>
+        
+        <div class="alert alert-info">
+          <strong>Ma demande :</strong> {{ selectedFrais.commentaire }}
+        </div>
+
+        <div *ngIf="selectedFrais.statut === 'Rejected'" class="alert alert-danger">
+          <strong>Motif du rejet :</strong> {{ getDernierCommentaireRejet() }}
+        </div>
       </div>
     </div>
   </div>
