@@ -1,55 +1,117 @@
-<div class="container mt-4">
-  <h3>Notes de frais à valider</h3>
+<div class="container-fluid pt-4 px-4">
 
-  <table class="table table-striped table-hover mt-3">
-    <thead>
-      <tr>
-        <th>Employé</th>
-        <th>Mission</th>
-        <th>Montant</th>
-        <th>Statut</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+  <div class="card shadow-sm border-0">
 
-    <tbody>
-      <tr *ngFor="let f of fraisAValider">
+    <div class="card-header bg-primary text-white py-3">
+      <h5 class="mb-0">Notes de frais à valider</h5>
+    </div>
 
-        <td>{{ f.employeeNom }} {{ f.employeePrenom }}</td>
+    <div class="card-body">
 
-        <td>{{ f.missionNom }}</td>
+      <p class="mb-3">
+        Nombre de frais : {{ fraisAValider.length }}
+      </p>
 
-        <td>{{ f.montant | number:'1.2-2' }} €</td>
+      <table class="table table-hover align-middle mb-0">
 
-        <td>
-          <span class="badge bg-warning text-dark">
-            {{ f.statut }}
-          </span>
-        </td>
+        <thead class="table-light">
 
-        <td>
+          <tr>
+            <th>Employé</th>
+            <th>Mission</th>
+            <th>Catégorie</th>
+            <th>Montant</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
 
-          <button
-            class="btn btn-sm btn-info me-2"
-            (click)="voir(f.id)">
-            Voir
-          </button>
+        </thead>
 
-          <button
-            class="btn btn-sm btn-success me-2"
-            (click)="approuver(f.id)">
-            Approuver
-          </button>
+        <tbody>
 
-          <button
-            class="btn btn-sm btn-danger"
-            (click)="rejeter(f.id)">
-            Rejeter
-          </button>
+          <tr *ngFor="let f of fraisAValider">
 
-        </td>
+            <td>
+              {{ f.employeeNom }} {{ f.employeePrenom }}
+            </td>
 
-      </tr>
-    </tbody>
-  </table>
+            <td>
+              {{ f.missionNom }}
+            </td>
+
+            <td>
+              {{ f.categorie }}
+            </td>
+
+            <td>
+              {{ f.montant | number:'1.2-2' }} €
+            </td>
+
+            <td>
+              {{ f.date | date:'dd/MM/yyyy' }}
+            </td>
+
+            <td>
+
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-warning text-dark': f.statut === 'Soumis',
+                  'bg-success': f.statut === 'Approved',
+                  'bg-danger': f.statut === 'Rejected'
+                }">
+
+                {{ f.statut }}
+
+              </span>
+
+            </td>
+
+            <td>
+
+              <div class="btn-group">
+
+                <button
+                  class="btn btn-sm btn-outline-info"
+                  (click)="voir(f.id)">
+                  Voir
+                </button>
+
+                <button
+                  class="btn btn-sm btn-outline-success"
+                  (click)="approuver(f.id)">
+                  Approuver
+                </button>
+
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="rejeter(f.id)">
+                  Rejeter
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          <tr *ngIf="fraisAValider.length === 0">
+
+            <td colspan="7" class="text-center py-4 text-muted">
+
+              Aucune note de frais à valider.
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
 </div>
