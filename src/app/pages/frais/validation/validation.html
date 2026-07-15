@@ -1,0 +1,117 @@
+<div class="container-fluid pt-4 px-4">
+
+  <div class="card shadow-sm border-0">
+
+    <div class="card-header bg-primary text-white py-3">
+      <h5 class="mb-0">Notes de frais à valider</h5>
+    </div>
+
+    <div class="card-body">
+
+      <p class="mb-3">
+        Nombre de frais : {{ fraisAValider.length }}
+      </p>
+
+      <table class="table table-hover align-middle mb-0">
+
+        <thead class="table-light">
+
+          <tr>
+            <th>Employé</th>
+            <th>Mission</th>
+            <th>Catégorie</th>
+            <th>Montant</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let f of fraisAValider">
+
+            <td>
+              {{ f.employeeNom }} {{ f.employeePrenom }}
+            </td>
+
+            <td>
+              {{ f.missionNom }}
+            </td>
+
+            <td>
+              {{ f.categorie }}
+            </td>
+
+            <td>
+              {{ f.montant | number:'1.2-2' }} €
+            </td>
+
+            <td>
+              {{ f.date | date:'dd/MM/yyyy' }}
+            </td>
+
+            <td>
+
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-warning text-dark': f.statut === 'Soumis',
+                  'bg-success': f.statut === 'Approved',
+                  'bg-danger': f.statut === 'Rejected'
+                }">
+
+                {{ f.statut }}
+
+              </span>
+
+            </td>
+
+            <td>
+
+              <div class="btn-group">
+
+                <button
+                  class="btn btn-sm btn-outline-info"
+                  (click)="voir(f.id)">
+                  Voir
+                </button>
+
+                <button
+                  class="btn btn-sm btn-outline-success"
+                  (click)="approuver(f.id)">
+                  Approuver
+                </button>
+
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="rejeter(f.id)">
+                  Rejeter
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          <tr *ngIf="fraisAValider.length === 0">
+
+            <td colspan="7" class="text-center py-4 text-muted">
+
+              Aucune note de frais à valider.
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>

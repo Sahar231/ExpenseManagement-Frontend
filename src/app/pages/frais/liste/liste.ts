@@ -13,10 +13,13 @@ declare var bootstrap: any;
 })
 export class ListeComponent implements OnInit {
   mesFrais: any[] = [];
-  fraisToEdit: any = {};
-  idToDelete: number | null = null;
   missions: any[] = [];
-  fraisToView: any = {};
+  
+  // Objets pour les modales
+  fraisToCreate: any = {};
+  fraisToEdit: any = {};
+  fraisToView: any = null;
+  idToDelete: number | null = null;
 
   constructor(
     private fraisService: FraisService, 
@@ -26,25 +29,49 @@ export class ListeComponent implements OnInit {
   ngOnInit() {
     this.chargerFrais();
     this.chargerMissions();
-    
   }
 
+  // --- CHARGEMENT ---
   chargerFrais() {
     this.fraisService.getMesFrais().subscribe({
       next: (data) => {
         this.mesFrais = data;
         this.cdr.detectChanges(); 
       },
-      error: (err) => console.error('Erreur chargement', err)
+      error: (err) => console.error('Erreur chargement frais', err)
     });
   }
+
   chargerMissions() {
-  this.fraisService.getMissions().subscribe({
+    this.fraisService.getMissions().subscribe({
       next: (data) => {
         this.missions = data;
         this.cdr.detectChanges(); 
       },
-      error: (err) => console.error('Erreur chargement', err)
+      error: (err) => console.error('Erreur chargement missions', err)
+    });
+  }
+
+  // --- CRÉATION ---
+  openCreateModal() {
+    this.fraisToCreate = { 
+      missionId: 0, 
+      categorie: 'Repas', 
+      montant: null, 
+      date: '', 
+      commentaire: '' 
+    };
+    const modal = new bootstrap.Modal(document.getElementById('createModal'));
+    modal.show();
+  }
+
+  saveCreate() {
+    this.fraisService.creerFrais(this.fraisToCreate).subscribe({
+      next: () => {
+        this.chargerFrais();
+        bootstrap.Modal.getInstance(document.getElementById('createModal')).hide();
+      },
+      error: (err) => alert('Erreur : ' + (err.error?.message || 'Action impossible'))
     });
   }
 
@@ -65,16 +92,13 @@ export class ListeComponent implements OnInit {
     });
   }
   
-voirDetails(f: any) {
-  this.fraisToView = { ...f };
-  console.log(this.fraisToView);
+  // --- DÉTAILS ---
+  voirDetails(f: any) {
+    this.fraisToView = { ...f };
+    const modal = new bootstrap.Modal(document.getElementById('viewModal'));
+    modal.show();
+  }
 
-  const modalElement = document.getElementById('viewModal');
-  console.log(modalElement);
-
-  const modal = new bootstrap.Modal(modalElement);
-  modal.show();
-}
   // --- SUPPRESSION ---
   openDeleteModal(id: number) {
     this.idToDelete = id;
@@ -104,12 +128,4 @@ voirDetails(f: any) {
       error: (err) => alert('Erreur : ' + (err.error?.message || 'Action impossible'))
     });
   }
-
-  // Helpers pour les boutons
-  isModifierDisabled(statut: string): boolean { return !['Brouillon', 'Rejeté'].includes(statut); }
-  isSupprimerDisabled(statut: string): boolean { return statut !== 'Brouillon'; }
-  isSoumettreDisabled(statut: string): boolean { return !['Brouillon', 'Rejeté'].includes(statut); }
-  
-
-
 }
