@@ -72,11 +72,21 @@ rejeterFrais(id: number, comment: string): Observable<any> {
   );
 }
 // --- MÉTHODES EXISTANTES ---
-  getDetailsFrais(id: number): Observable<any> {
-   
-    return this.http.get<any>(`${this.apiUrl}/${id}/details-employe`)
-      .pipe(catchError(this.handleError));
-  }
+ 
+
+getDetails(id: number): Observable<any> {
+  
+  return this.http.get<any>(`${this.apiUrl}/${id}/details-employe`).pipe(
+    catchError(this.handleError)
+  );
+} 
+
+getDetailsnotefrais(id: number): Observable<any> {
+ 
+  return this.http.get<any>(`${this.apiUrl}/${id}/details-manager`).pipe(
+    catchError(this.handleError)
+  );
+}
 
   
 }

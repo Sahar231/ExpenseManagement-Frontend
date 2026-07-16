@@ -184,31 +184,42 @@
   </div>
 </div>
 
-<!-- Modal Détails -->
-<!-- Utilise #detailsModalRef pour la référence et garde un ID fixe -->
-<!-- Modale Détails (remplace ton ancienne div id="detailsModal") -->
-<div class="modal fade" #detailsModalRef id="detailsModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content" *ngIf="selectedFrais">
-      <div class="modal-header text-white" style="background-color: #1e7e4e;">
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
         <h5 class="modal-title">Détails de ma demande</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-        <p><strong>Mission :</strong> {{ selectedFrais.mission?.nom }}</p>
-        <hr>
-        <h6>Responsable de mission :</h6>
-        <p>{{ selectedFrais.mission?.manager?.nom }} {{ selectedFrais.mission?.manager?.prenom }} 
-           <br><small class="text-muted">{{ selectedFrais.mission?.manager?.email }}</small>
-        </p>
-        
-        <div class="alert alert-info">
-          <strong>Ma demande :</strong> {{ selectedFrais.commentaire }}
-        </div>
 
-        <div *ngIf="selectedFrais.statut === 'Rejected'" class="alert alert-danger">
-          <strong>Motif du rejet :</strong> {{ getDernierCommentaireRejet() }}
+      <!-- Le *ngIf vérifie que les données sont bien là avant d'afficher -->
+      <div class="modal-body" *ngIf="selectedFrais">
+        <div class="row mb-2">
+          <div class="col-6"><strong>Mission:</strong></div>
+          <div class="col-6">{{ selectedFrais.missionNom }}</div>
         </div>
+        <div class="row mb-2">
+          <div class="col-6"><strong>Responsable:</strong></div>
+          <div class="col-6">{{ selectedFrais.managerNom }} {{ selectedFrais.managerPrenom }}</div>
+        </div>
+        <hr>
+        <div class="row mb-2">
+          <div class="col-6"><strong>Montant:</strong></div>
+          <div class="col-6">{{ selectedFrais.montant | number:'1.2-2' }} DT</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-6"><strong>Commentaire:</strong></div>
+          <div class="col-6">{{ selectedFrais.commentaire || 'Aucun commentaire' }}</div>
+        </div>
+        
+        <!-- Affichage spécifique si rejeté -->
+        <div class="alert alert-danger mt-3" *ngIf="selectedFrais.statut === 'Rejected'">
+          <strong>Motif du rejet:</strong> {{ selectedFrais.motifRejet }}
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
       </div>
     </div>
   </div>
