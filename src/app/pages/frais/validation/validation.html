@@ -83,3 +83,36 @@
     </div>
   </div>
 </div>
+<!-- Modal Détails -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Détails de la demande</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Affichage conditionnel des données -->
+      <div class="modal-body" *ngIf="selectedFrais; else loading">
+        <p><strong>Employé :</strong> {{ selectedFrais.employeeNom }} {{ selectedFrais.employeePrenom }}</p>
+        <p><strong>Mission :</strong> {{ selectedFrais.missionNom }}</p>
+        <hr>
+        <p><strong>Commentaire :</strong> {{ selectedFrais.commentaire || 'Aucun commentaire' }}</p>
+        <p><strong>Montant :</strong> {{ selectedFrais.montant | number:'1.2-2' }} DT</p>
+        <p><strong>Statut :</strong> {{ selectedFrais.statut }}</p>
+      </div>
+
+      <!-- Template de chargement -->
+      <ng-template #loading>
+        <div class="modal-body text-center py-4">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p>Chargement en cours...</p>
+        </div>
+      </ng-template>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
