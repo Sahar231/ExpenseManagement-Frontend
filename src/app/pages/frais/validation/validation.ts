@@ -1,18 +1,25 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // <--- AJOUTE CECI
+import { FormsModule } from '@angular/forms';
 import { FraisService } from '../../../core/services/frais';
+
+// Déclaration pour Bootstrap
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-validation',
   standalone: true,
-  imports: [CommonModule, FormsModule], // <--- AJOUTE FormsModule ICI
+  imports: [CommonModule, FormsModule],
   templateUrl: './validation.html'
 })
 export class ValidationComponent implements OnInit {
   fraisAValider: any[] = [];
   fraisEnCoursDeRejet: number | null = null;
   motif: string = '';
+  
+  // Variables nécessaires pour le modal
+  selectedFrais: any = null;
+  lastActiveElement: HTMLElement | null = null;
 
   constructor(
     private fraisService: FraisService,
@@ -33,43 +40,50 @@ export class ValidationComponent implements OnInit {
     });
   }
 
-  approuver(id: number): void {
-    this.fraisService.approuverFrais(id).subscribe({
-      next: () => {
-        this.chargerFrais();
-        alert('Succès : Le frais a été approuvé.');
+  // Méthode corrigée : vide avant de charger
+  voir(id: number) {
+    this.selectedFrais = null; // 1. VIDER pour éviter le mélange
+    this.lastActiveElement = document.activeElement as HTMLElement;
+
+    this.fraisService.getDetails(id).subscribe({
+      next: (data) => {
+        this.selectedFrais = data; // 2. Remplir avec les données fraîches
+        this.cdr.detectChanges();
+        this.showModal('detailsModal');
       },
-      error: (err) => alert('Erreur : ' + (err.error?.message || 'Impossible d\'approuver'))
+      error: (err) => console.error("Erreur chargement détails", err)
     });
+  }
+
+  // --- LOGIQUE MODAL ---
+  private showModal(id: string) {
+    const element = document.getElementById(id);
+    if (element) {
+      const modal = bootstrap.Modal.getOrCreateInstance(element);
+      modal.show();
+    }
+  }
+
+  // --- ACTIONS ---
+  approuver(id: number): void {
+    this.fraisService.approuverFrais(id).subscribe(() => this.chargerFrais());
   }
 
   rejeter(id: number): void {
     this.fraisEnCoursDeRejet = id;
     this.motif = '';
   }
-
+  
   confirmerRejet(): void {
-    if (!this.motif || this.motif.trim() === '') {
-      alert("Le motif est obligatoire.");
-      return;
-    }
-
-    this.fraisService.rejeterFrais(this.fraisEnCoursDeRejet!, this.motif).subscribe({
-      next: () => {
-        this.chargerFrais();
-        this.annulerRejet();
-      },
-      error: (err) => alert('Erreur : ' + (err.error?.message || 'Impossible de rejeter'))
+    if (!this.motif.trim()) return;
+    this.fraisService.rejeterFrais(this.fraisEnCoursDeRejet!, this.motif).subscribe(() => {
+      this.chargerFrais();
+      this.annulerRejet();
     });
   }
 
   annulerRejet(): void {
     this.fraisEnCoursDeRejet = null;
     this.motif = '';
-  }
-
-  voir(id: number): void {
-    // Redirection vers une route de détails ou ouverture d'une modale
-    console.log('Détails pour ID :', id);
   }
 }
