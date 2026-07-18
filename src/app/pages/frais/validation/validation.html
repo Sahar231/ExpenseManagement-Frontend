@@ -1,26 +1,20 @@
 <div class="container-fluid pt-4 px-4">
   <div class="card shadow-sm border-0">
-    <!-- Header -->
     <div class="card-header bg-primary text-white py-3">
-      <h5 class="mb-0">Notes de frais à valider</h5>
+      <h5 class="mb-0">Gestion des notes de frais</h5>
     </div>
 
     <div class="card-body">
-      <p class="mb-3">
-        Nombre de frais : {{ fraisAValider.length }}
-      </p>
-
-      <!-- Tableau -->
       <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
           <tr>
-            <th>Employe</th>
+            <th>Employé</th>
             <th>Mission</th>
             <th>Catégorie</th>
             <th>Montant</th>
             <th>Date</th>
             <th>Statut</th>
-            <th style="min-width: 200px;">Actions</th>
+            <th style="min-width: 250px;">Actions / Détails</th>
           </tr>
         </thead>
         <tbody>
@@ -35,47 +29,32 @@
                   'bg-warning text-dark': f.statut === 'Soumis',
                   'bg-success': f.statut === 'Approved',
                   'bg-danger': f.statut === 'Rejected'
-                }">
-                {{ f.statut }}
-              </span>
+                }">{{ f.statut }}</span>
             </td>
             <td>
-              <!-- État normal : Afficher les boutons -->
-              <div class="btn-group" *ngIf="fraisEnCoursDeRejet !== f.id">
-                <button class="btn btn-sm btn-outline-info" (click)="voir(f.id)">
-                  Voir
-                </button>
-                <button class="btn btn-sm btn-outline-success" (click)="approuver(f.id)">
-                  Approuver
-                </button>
-                <button class="btn btn-sm btn-outline-danger" (click)="rejeter(f.id)">
-                  Rejeter
-                </button>
+              <!-- A. Boutons si Soumis -->
+              <div class="btn-group" *ngIf="f.statut === 'Soumis' && fraisEnCoursDeRejet !== f.id">
+                <button class="btn btn-sm btn-outline-info" (click)="voir(f.id)">Voir</button>
+                <button class="btn btn-sm btn-outline-success" (click)="approuver(f.id)">Approuver</button>
+                <button class="btn btn-sm btn-outline-danger" (click)="rejeter(f.id)">Rejeter</button>
               </div>
 
-              <!-- État rejet : Afficher le champ de saisie -->
+              <!-- B. Input si Rejet en cours -->
               <div *ngIf="fraisEnCoursDeRejet === f.id" class="d-flex gap-1 align-items-center">
-                <input type="text" 
-                       [(ngModel)]="motif" 
-                       class="form-control form-control-sm" 
-                       placeholder="Motif..."
-                       (keydown.enter)="confirmerRejet()"
-                       style="width: 120px;">
-                
-                <button class="btn btn-sm btn-success" (click)="confirmerRejet()" title="Confirmer">
-                  ✓
-                </button>
-                <button class="btn btn-sm btn-secondary" (click)="annulerRejet()" title="Annuler">
-                  ✕
-                </button>
+                <input type="text" [(ngModel)]="motif" class="form-control form-control-sm" placeholder="Motif..." (keydown.enter)="confirmerRejet()">
+                <button class="btn btn-sm btn-success" (click)="confirmerRejet()">✓</button>
+                <button class="btn btn-sm btn-secondary" (click)="annulerRejet()">✕</button>
               </div>
-            </td>
-          </tr>
 
-          <!-- Message si vide -->
-          <tr *ngIf="fraisAValider.length === 0">
-            <td colspan="7" class="text-center py-4 text-muted">
-              Aucune note de frais à valider.
+              <!-- C. Affichage Motif si Rejected -->
+              <div *ngIf="f.statut === 'Rejected'" class="text-danger small">
+                <strong>Motif :</strong> {{ f.dernierCommentaire }}
+              </div>
+
+              <!-- D. Affichage Date si Approved -->
+              <div *ngIf="f.statut === 'Approved'" class="text-success small">
+                <strong>Validé le :</strong> {{ f.dateAction | date:'dd/MM/yyyy' }}
+              </div>
             </td>
           </tr>
         </tbody>
@@ -83,33 +62,21 @@
     </div>
   </div>
 </div>
-<!-- Modal Détails -->
-<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+<!-- Modal Détails (DOIT ÊTRE EN DEHORS DE LA BOUCLE ET DU TABLEAU) -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true" #detailsModal>
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content" *ngIf="selectedFrais">
       <div class="modal-header">
         <h5 class="modal-title">Détails de la demande</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-
-      <!-- Affichage conditionnel des données -->
-      <div class="modal-body" *ngIf="selectedFrais; else loading">
+      <div class="modal-body">
         <p><strong>Employé :</strong> {{ selectedFrais.employeeNom }} {{ selectedFrais.employeePrenom }}</p>
         <p><strong>Mission :</strong> {{ selectedFrais.missionNom }}</p>
         <hr>
-        <p><strong>Commentaire :</strong> {{ selectedFrais.commentaire || 'Aucun commentaire' }}</p>
         <p><strong>Montant :</strong> {{ selectedFrais.montant | number:'1.2-2' }} DT</p>
         <p><strong>Statut :</strong> {{ selectedFrais.statut }}</p>
       </div>
-
-      <!-- Template de chargement -->
-      <ng-template #loading>
-        <div class="modal-body text-center py-4">
-          <div class="spinner-border text-primary" role="status"></div>
-          <p>Chargement en cours...</p>
-        </div>
-      </ng-template>
-
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
       </div>

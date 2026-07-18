@@ -6,6 +6,7 @@ import { DashboardComponent } from './pages/dashbord/dashbord';
 import { ListeComponent } from './pages/frais/liste/liste';
 import { ValidationComponent } from './pages/frais/validation/validation';
 
+
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
