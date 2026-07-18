@@ -133,6 +133,9 @@ Represents the history of approval decisions.
 ## Project Structure
 
 
+## Project Structure
+
+```text
 expense-portal/
 ├── public/
 ├── src/
@@ -175,7 +178,7 @@ expense-portal/
 ├── package-lock.json
 ├── tsconfig.json
 └── README.md
-
+```
 ---
 
 ## Application Routes
