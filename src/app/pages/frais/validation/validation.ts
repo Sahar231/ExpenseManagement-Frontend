@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FraisService } from '../../../core/services/frais';
 
-// Déclaration pour Bootstrap
 declare var bootstrap: any;
 
 @Component({
@@ -16,55 +15,24 @@ export class ValidationComponent implements OnInit {
   fraisAValider: any[] = [];
   fraisEnCoursDeRejet: number | null = null;
   motif: string = '';
-  
-  // Variables nécessaires pour le modal
   selectedFrais: any = null;
-  lastActiveElement: HTMLElement | null = null;
 
-  constructor(
-    private fraisService: FraisService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private fraisService: FraisService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.chargerFrais();
   }
 
   chargerFrais(): void {
+    // Appel à ton API corrigée (tous statuts)
     this.fraisService.getFraisAValider().subscribe({
       next: (data: any[]) => {
         this.fraisAValider = data;
         this.cdr.detectChanges();
-      },
-      error: (err) => console.error(err)
+      }
     });
   }
 
-  // Méthode corrigée : vide avant de charger
-  voir(id: number) {
-    this.selectedFrais = null; // 1. VIDER pour éviter le mélange
-    this.lastActiveElement = document.activeElement as HTMLElement;
-
-    this.fraisService.getDetails(id).subscribe({
-      next: (data) => {
-        this.selectedFrais = data; // 2. Remplir avec les données fraîches
-        this.cdr.detectChanges();
-        this.showModal('detailsModal');
-      },
-      error: (err) => console.error("Erreur chargement détails", err)
-    });
-  }
-
-  // --- LOGIQUE MODAL ---
-  private showModal(id: string) {
-    const element = document.getElementById(id);
-    if (element) {
-      const modal = bootstrap.Modal.getOrCreateInstance(element);
-      modal.show();
-    }
-  }
-
-  // --- ACTIONS ---
   approuver(id: number): void {
     this.fraisService.approuverFrais(id).subscribe(() => this.chargerFrais());
   }
@@ -73,7 +41,7 @@ export class ValidationComponent implements OnInit {
     this.fraisEnCoursDeRejet = id;
     this.motif = '';
   }
-  
+
   confirmerRejet(): void {
     if (!this.motif.trim()) return;
     this.fraisService.rejeterFrais(this.fraisEnCoursDeRejet!, this.motif).subscribe(() => {
@@ -85,5 +53,25 @@ export class ValidationComponent implements OnInit {
   annulerRejet(): void {
     this.fraisEnCoursDeRejet = null;
     this.motif = '';
+  }
+
+  voir(id: number) {
+    this.fraisService.getDetails(id).subscribe(data => {
+      this.selectedFrais = data;
+      
+      // 1. Détection des changements pour que la data soit dans le DOM
+      this.cdr.detectChanges(); 
+
+      // 2. Sécurisation de l'accès au DOM
+      const modalElement = document.getElementById('detailsModal');
+      
+      if (modalElement) {
+        // Utilisation de la méthode native Bootstrap en toute sécurité
+        const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modal.show();
+      } else {
+        console.error("L'élément modal 'detailsModal' est introuvable dans le HTML.");
+      }
+    });
   }
 }

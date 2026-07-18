@@ -87,6 +87,8 @@ getDetailsnotefrais(id: number): Observable<any> {
     catchError(this.handleError)
   );
 }
-
+getHistoriqueGlobal(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/historique`);
+}
   
 }
