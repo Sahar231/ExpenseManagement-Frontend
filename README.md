@@ -1,63 +1,137 @@
-<<<<<<< HEAD
-# ExpensePortal
+# Expense Portal
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.5.
+Application web de gestion des frais professionnels destinée aux employés et aux managers.
 
-## Development server
+## 1. Description du projet
 
-To start a local development server, run:
+L’objectif de cette application est de permettre à un employé de déclarer ses frais professionnels, puis de permettre à un manager de les valider ou de les rejeter.
+
+Le flux principal est le suivant :
+
+1. Un employé se connecte à l’application.
+2. Il saisit une note de frais et la soumet.
+3. La note passe en attente de validation.
+4. Un manager consulte la demande et décide de l’approuver ou de la rejeter avec un commentaire si nécessaire.
+5. L’employé peut suivre l’évolution du statut de sa note de frais à tout moment.
+
+## 2. Fonctionnalités principales
+
+### Pour l’employé
+- Se connecter à l’application
+- Créer une note de frais
+- Modifier une note si elle est encore en brouillon ou rejetée
+- Soumettre une note pour validation
+- Consulter l’état de ses demandes
+
+### Pour le manager
+- Consulter les notes de frais soumises
+- Approuver ou rejeter une demande
+- Ajouter un commentaire en cas de rejet
+- Suivre l’historique des décisions
+
+
+
+## 3. Architecture du projet
+
+Le projet suit une architecture simple en 3 couches :
+
+- Frontend : Angular
+- Backend : .NET Web API
+- Base de données : SQL Server
+
+Le frontend envoie des requêtes au backend, qui applique les règles métier et interagit avec la base de données via Entity Framework.
+
+L’authentification repose sur des tokens JWT, envoyés à chaque requête pour identifier l’utilisateur connecté et son rôle.
+
+## 4. Modèle de données principal
+
+### Entités principales
+- User : identifiant, nom, prénom, email, mot de passe, rôle (Employé / Manager)
+- Mission : nom, manager associé, lieu, date de début, date de fin
+- Expense : note de frais avec montant, date, catégorie, statut, commentaire
+- Approval : historique des décisions d’approbation ou de rejet
+
+### Règles métier importantes
+- Une note de frais ne peut être modifiée que si elle est en Brouillon ou Rejetée.
+- Une note en Soumis ou Approuvé est figée.
+- Un employé ne voit que ses propres frais.
+- Un manager ne voit que les frais des missions qu’il gère.
+- Un commentaire est obligatoire en cas de rejet.
+
+## 5. Statuts de la note de frais
+
+Le cycle de vie d’une note de frais est le suivant :
+
+- Brouillon
+- Soumis
+- Approuvé
+- Rejeté
+
+## 6. Technologies utilisées
+
+- Angular 22
+- TypeScript
+- RxJS
+- Bootstrap 5
+- Bootstrap Icons
+- Vitest / Angular testing setup
+
+## 7. Prérequis
+
+Avant de commencer, assurez-vous d’avoir installé :
+
+- Node.js (version 20 ou supérieure recommandée)
+- npm
+
+## 8. Installation et exécution
+
+### Installer les dépendances
 
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Lancer l’application en mode développement
 
 ```bash
-ng generate component component-name
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Puis ouvrez votre navigateur à l’adresse suivante :
+
+```text
+http://localhost:4200/
+```
+
+### Construire l’application pour la production
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
-
-To build the project run:
+### Exécuter les tests
 
 ```bash
-ng build
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 9. Structure du projet frontend
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```text
+src/
+  app/
+    core/           # services et gardes d’authentification
+    pages/
+      auth/         # login et signup
+      dashbord/     # tableau de bord
+      frais/        # liste et validation des frais
 ```
 
-## Running end-to-end tests
+## 10. Routes principales
 
-For end-to-end (e2e) testing, run:
+- /login : page de connexion
+- /signup : page d’inscription
+- /dashboard : tableau de bord principal
+- /dashboard/frais/liste : liste des frais
+- /dashboard/frais/validation : validation des frais
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-=======
-# ExpenseManagement-Frontend
->>>>>>> 2738c1c46350c36074c84a2e2ea641eb7eed7a81
