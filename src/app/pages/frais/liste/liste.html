@@ -1,3 +1,13 @@
+<div class="mb-3">
+  <input 
+    type="text"
+    class="form-control"
+    placeholder="Rechercher..."
+    [(ngModel)]="fraisRecherche"
+    (input)="filtrerFrais()">
+</div>
+
+
 <div class="container-fluid pt-4 px-4">
   <div class="card shadow-sm border-0" style="border-radius: 8px; overflow: hidden;">
     <!-- En-tête -->
@@ -22,7 +32,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let f of mesFrais">
+          <tr *ngFor="let f of (fraisRecherche ? mesFraisFiltres : mesFrais)">
             <td class="px-4">{{ f.missionNom }}</td>
             <td>{{ f.categorie }}</td>
             <td>{{ f.montant | number:'1.2-2' }} DT</td>
