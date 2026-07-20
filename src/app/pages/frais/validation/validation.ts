@@ -16,6 +16,8 @@ export class ValidationComponent implements OnInit {
   fraisEnCoursDeRejet: number | null = null;
   motif: string = '';
   selectedFrais: any = null;
+  fraisAserach: string ='';
+  fraisA: any[] = [];
 
   constructor(private fraisService: FraisService, private cdr: ChangeDetectorRef) {}
 
@@ -32,7 +34,28 @@ export class ValidationComponent implements OnInit {
       }
     });
   }
+  filtrerFrais(): void {
 
+  const recherche = this.fraisAserach.toLowerCase();
+
+  if (recherche === '') {
+    this.fraisA = this.fraisAValider;
+    return;
+  }
+
+  this.fraisA = this.fraisAValider.filter(f => {
+
+    return (
+      f.employeeNom?.toLowerCase().includes(recherche) ||
+      f.employeePrenom?.toLowerCase().includes(recherche) ||
+      f.missionNom?.toLowerCase().includes(recherche) ||
+      f.categorie?.toLowerCase().includes(recherche) ||
+      f.statut?.toLowerCase().includes(recherche)
+    );
+
+  });
+
+}
   approuver(id: number): void {
     this.fraisService.approuverFrais(id).subscribe(() => this.chargerFrais());
   }
