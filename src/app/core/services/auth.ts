@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
   // L'URL exacte de ton contrôleur d'authentification .NET
-  private apiUrl = 'https://localhost:7212/api/auth';
+  private apiUrl = 'http://localhost:5111/api/auth';
 
   // Injection de HttpClient obligatoire pour communiquer avec le backend
   constructor(private http: HttpClient) { }

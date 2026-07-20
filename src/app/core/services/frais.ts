@@ -7,8 +7,8 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class FraisService {
-  private apiUrl = 'https://localhost:7212/api/expenses';
-  private missionsUrl = 'https://localhost:7212/api/missions';
+  private apiUrl = 'http://localhost:5111/api/expenses';
+  private missionsUrl = 'http://localhost:5111/api/missions';
 
   constructor(private http: HttpClient) { }
 
@@ -79,7 +79,11 @@ getDetails(id: number): Observable<any> {
   return this.http.get<any>(`${this.apiUrl}/${id}/details-employe`).pipe(
     catchError(this.handleError)
   );
-} 
+}
+getStatistiques() :Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/Statistiques`).pipe(catchError(this.handleError)
+  );
+}
 
 getDetailsnotefrais(id: number): Observable<any> {
  

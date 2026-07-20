@@ -6,7 +6,7 @@ import { DashboardComponent } from './pages/dashbord/dashbord';
 import { ListeComponent } from './pages/frais/liste/liste';
 import { ValidationComponent } from './pages/frais/validation/validation';
 
-
+import { TableauDeBord } from './pages/tableau-de-bord/tableau-de-bord';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
@@ -20,6 +20,9 @@ export const routes: Routes = [
       { 
         path: 'frais/validation', 
         component: ValidationComponent
+      },
+      { 
+        path: 'tableau-de-bord', component: TableauDeBord
       }
     ]
   }

@@ -16,6 +16,7 @@ export class ValidationComponent implements OnInit {
   fraisEnCoursDeRejet: number | null = null;
   motif: string = '';
   selectedFrais: any = null;
+  fraisAsearch: string ='';
 
   constructor(private fraisService: FraisService, private cdr: ChangeDetectorRef) {}
 
