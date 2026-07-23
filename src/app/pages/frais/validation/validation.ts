@@ -78,23 +78,5 @@ export class ValidationComponent implements OnInit {
     this.motif = '';
   }
 
-  voir(id: number) {
-    this.fraisService.getDetails(id).subscribe(data => {
-      this.selectedFrais = data;
-      
-      // 1. Détection des changements pour que la data soit dans le DOM
-      this.cdr.detectChanges(); 
-
-      // 2. Sécurisation de l'accès au DOM
-      const modalElement = document.getElementById('detailsModal');
-      
-      if (modalElement) {
-        // Utilisation de la méthode native Bootstrap en toute sécurité
-        const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-        modal.show();
-      } else {
-        console.error("L'élément modal 'detailsModal' est introuvable dans le HTML.");
-      }
-    });
-  }
+  
 }

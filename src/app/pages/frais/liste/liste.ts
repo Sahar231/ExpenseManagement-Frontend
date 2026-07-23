@@ -16,6 +16,8 @@ export class ListeComponent implements OnInit, OnDestroy {
   
   mesFrais: any[] = [];
   missions: any[] = [];
+  fraisRecherche: string = '';
+mesFraisFiltres: any[] = [];
   fraisToCreate: any = {};
   fraisToEdit: any = {};
   idToDelete: number | null = null;
@@ -40,6 +42,28 @@ export class ListeComponent implements OnInit, OnDestroy {
       element.removeEventListener('hidden.bs.modal', this.modalHiddenListener);
     }
   }
+  filtrerFrais(): void {
+
+  const recherche = this.fraisRecherche.toLowerCase();
+
+  if (recherche === '') {
+    this.mesFraisFiltres = this.mesFrais;
+    return;
+  }
+
+  this.mesFraisFiltres = this.mesFrais.filter(f => {
+
+    return (
+      f.employeeNom?.toLowerCase().includes(recherche) ||
+      f.employeePrenom?.toLowerCase().includes(recherche) ||
+      f.missionNom?.toLowerCase().includes(recherche) ||
+      f.categorie?.toLowerCase().includes(recherche) ||
+      f.statut?.toLowerCase().includes(recherche)
+    );
+
+  });
+
+}
 
   // --- FOCUS RESTORATION SETUP ---
   private setupModalFocusListener() {
