@@ -85,14 +85,7 @@ getStatistiques() :Observable<any> {
   );
 }
 
-getDetailsnotefrais(id: number): Observable<any> {
- 
-  return this.http.get<any>(`${this.apiUrl}/${id}/details-manager`).pipe(
-    catchError(this.handleError)
-  );
-}
-getHistoriqueGlobal(): Observable<any[]> {
-  return this.http.get<any[]>(`${this.apiUrl}/historique`);
-}
+
+
   
 }

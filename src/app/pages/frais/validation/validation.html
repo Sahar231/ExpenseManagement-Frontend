@@ -22,7 +22,9 @@
             <th>Catégorie</th>
             <th>Montant</th>
             <th>Date</th>
+            <th>commantire</th>
             <th>Statut</th>
+            
             <th style="min-width: 250px;">Actions / Détails</th>
           </tr>
         </thead>
@@ -33,17 +35,34 @@
             <td>{{ f.categorie }}</td>
             <td>{{ f.montant | number:'1.2-2' }} DT</td>
             <td>{{ f.date | date:'dd/MM/yyyy' }}</td>
-            <td>
-              <span class="badge" [ngClass]="{
-                  'bg-warning text-dark': f.statut === 'Soumis',
-                  'bg-success': f.statut === 'Approved',
-                  'bg-danger': f.statut === 'Rejected'
-                }">{{ f.statut }}</span>
-            </td>
+            <td>{{f.commentaire }}</td>
+            
+                <td>
+  <span class="badge" [ngClass]="{
+      'bg-warning text-dark': f.statut === 'Soumis',
+      'bg-success': f.statut === 'Approved',
+      'bg-danger': f.statut === 'Rejected'
+    }">
+
+    {{ f.statut }}
+
+  </span>
+
+  
+
+</td>
+            
             <td>
               <!-- A. Boutons si Soumis -->
               <div class="btn-group" *ngIf="f.statut === 'Soumis' && fraisEnCoursDeRejet !== f.id">
-                <button class="btn btn-sm btn-outline-info" (click)="voir(f.id)">Voir</button>
+                <small
+    *ngIf="f.estResoumise"
+    class="d-block text-primary mt-1">
+    {{ f.dernierCommentaire }}
+  
+
+  </small>
+             
                 <button class="btn btn-sm btn-outline-success" (click)="approuver(f.id)">Approuver</button>
                 <button class="btn btn-sm btn-outline-danger" (click)="rejeter(f.id)">Rejeter</button>
               </div>
@@ -68,27 +87,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
-  </div>
-</div>
-<!-- Modal Détails (DOIT ÊTRE EN DEHORS DE LA BOUCLE ET DU TABLEAU) -->
-<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true" #detailsModal>
-  <div class="modal-dialog">
-    <div class="modal-content" *ngIf="selectedFrais">
-      <div class="modal-header">
-        <h5 class="modal-title">Détails de la demande</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Employé :</strong> {{ selectedFrais.employeeNom }} {{ selectedFrais.employeePrenom }}</p>
-        <p><strong>Mission :</strong> {{ selectedFrais.missionNom }}</p>
-        <hr>
-        <p><strong>Montant :</strong> {{ selectedFrais.montant | number:'1.2-2' }} DT</p>
-        <p><strong>Statut :</strong> {{ selectedFrais.statut }}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-      </div>
     </div>
   </div>
 </div>
