@@ -34,7 +34,7 @@ export class LoginComponent {
         this.authService.saveSessionFromResponse(response);
 
         // Redirection vers le formulaire de création (La route enfant exacte configurée dans app.routes.ts)
-        this.router.navigate(['/dashboard/frais/liste']);
+        this.router.navigate(['/sidebar/tableau-de-bord']);
       },
       error: (err) => {
         this.loading = false;

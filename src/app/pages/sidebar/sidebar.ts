@@ -4,13 +4,13 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth'; // Chemin vérifié par rapport à ton dossier
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-sidebar',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './dashbord.html',
-  styleUrls: ['./dashbord.css']
+  templateUrl: './sidebar.html',
+  styleUrls: ['./sidebar.css']
 })
-export class DashboardComponent implements OnInit {
+export class sidebarComponent implements OnInit {
   isExpensesOpen = false;
   
   // Variables d'affichage dynamiques
