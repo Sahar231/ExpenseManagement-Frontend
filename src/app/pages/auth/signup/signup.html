@@ -1,128 +1,252 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-  <div class="card p-4 shadow-lg" style="width: 100%; max-width: 450px; border-radius: 15px;">
-    
+<div class="signup-page">
+
+  <div class="signup-card">
+
+    <!-- Logo -->
     <div class="text-center mb-4">
-      <h2 class="fw-bold text-success">Inscription</h2>
-      <p class="text-muted">Créez votre compte collaborateur</p>
+
+      <div class="logo">
+        <i class="bi bi-person-plus-fill"></i>
+      </div>
+
+      <h2 class="fw-bold mt-3 mb-1">
+        Expense Portal
+      </h2>
+
+      <p class="text-muted">
+        Créez votre compte collaborateur
+      </p>
+
     </div>
 
     <form #signupForm="ngForm" (ngSubmit)="onSubmit(signupForm)">
-      
+
+      <!-- Nom / Prénom -->
       <div class="row">
-        <div class="col-md-6 mb-3">
-          <label class="form-label">Nom</label>
-          <input 
-            type="text" 
-            name="nom" 
-            [(ngModel)]="user.nom" 
-            #nomRef="ngModel"
-            required 
-            pattern="^[a-zA-ZÀ-ÿ\s\-]+$"
-            (input)="checkPasswordSecurity()"
-            class="form-control" 
-            placeholder="Nom">
-          <div *ngIf="nomRef.invalid && (nomRef.dirty || nomRef.touched)" class="text-danger mt-1" style="font-size: 12px;">
-            <small *ngIf="nomRef.errors?.['required']">Obligatoire.</small>
-            <small *ngIf="nomRef.errors?.['pattern']">Lettres uniquement.</small>
-          </div>
-        </div>
 
         <div class="col-md-6 mb-3">
-          <label class="form-label">Prénom</label>
-          <input 
-            type="text" 
-            name="prenom" 
-            [(ngModel)]="user.prenom" 
-            #prenomRef="ngModel"
-            required 
-            pattern="^[a-zA-ZÀ-ÿ\s\-]+$"
-            (input)="checkPasswordSecurity()"
-            class="form-control" 
-            placeholder="Prénom">
-          <div *ngIf="prenomRef.invalid && (prenomRef.dirty || prenomRef.touched)" class="text-danger mt-1" style="font-size: 12px;">
-            <small *ngIf="prenomRef.errors?.['required']">Obligatoire.</small>
-            <small *ngIf="prenomRef.errors?.['pattern']">Lettres uniquement.</small>
+
+          <label class="form-label fw-semibold">
+            Nom
+          </label>
+
+          <div class="input-group">
+
+            <span class="input-group-text">
+              <i class="bi bi-person"></i>
+            </span>
+
+            <input
+              type="text"
+              class="form-control"
+              name="nom"
+              [(ngModel)]="user.nom"
+              #nomRef="ngModel"
+              required
+              pattern="^[a-zA-ZÀ-ÿ\s\-]+$"
+              (input)="checkPasswordSecurity()"
+              placeholder="Nom">
+
           </div>
+
+          <small
+            class="text-danger"
+            *ngIf="nomRef.invalid && (nomRef.dirty || nomRef.touched)">
+            Nom invalide.
+          </small>
+
         </div>
+
+        <div class="col-md-6 mb-3">
+
+          <label class="form-label fw-semibold">
+            Prénom
+          </label>
+
+          <div class="input-group">
+
+            <span class="input-group-text">
+              <i class="bi bi-person"></i>
+            </span>
+
+            <input
+              type="text"
+              class="form-control"
+              name="prenom"
+              [(ngModel)]="user.prenom"
+              #prenomRef="ngModel"
+              required
+              pattern="^[a-zA-ZÀ-ÿ\s\-]+$"
+              (input)="checkPasswordSecurity()"
+              placeholder="Prénom">
+
+          </div>
+
+          <small
+            class="text-danger"
+            *ngIf="prenomRef.invalid && (prenomRef.dirty || prenomRef.touched)">
+            Prénom invalide.
+          </small>
+
+        </div>
+
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Adresse Email</label>
-        <input 
-          type="text" 
-          name="email" 
-          [(ngModel)]="user.email" 
-          #emailRef="ngModel"
-          required 
-          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-          (input)="checkPasswordSecurity()"
-          class="form-control" 
-          placeholder="exemple@entreprise.com">
-        
-        <div *ngIf="emailRef.invalid && (emailRef.dirty || emailRef.touched)" class="text-danger mt-1" style="font-size: 13px;">
-          <small *ngIf="emailRef.errors?.['required']">L'adresse email est obligatoire.</small>
-          <small *ngIf="emailRef.errors?.['pattern']">Format email invalide.</small>
-        </div>
-      </div>
+      <!-- Email -->
 
       <div class="mb-3">
-        <label class="form-label">Mot de passe</label>
-        <input 
-          type="password" 
-          name="password" 
-          [(ngModel)]="user.password" 
-          #passRef="ngModel"
-          required 
-          pattern="^(?=.*[A-Z])(?=.*[!@#\$%\^&\*\(\)_\+\-\=\[\]\{\};':&quot;\\|,.<>\/\?]).{8,}$"
-          (input)="checkPasswordSecurity()"
-          class="form-control" 
-          placeholder="********">
-        
-        <div *ngIf="passRef.invalid && (passRef.dirty || passRef.touched)" class="text-danger mt-1" style="font-size: 13px;">
-          <small *ngIf="passRef.errors?.['required']">Le mot de passe est obligatoire.</small>
-          <small *ngIf="passRef.errors?.['pattern']">Doit contenir au moins 8 caractères, une majuscule et un caractère spécial.</small>
+
+        <label class="form-label fw-semibold">
+          Adresse Email
+        </label>
+
+        <div class="input-group">
+
+          <span class="input-group-text">
+            <i class="bi bi-envelope-fill"></i>
+          </span>
+
+          <input
+            type="email"
+            class="form-control"
+            name="email"
+            [(ngModel)]="user.email"
+            #emailRef="ngModel"
+            required
+            email
+            (input)="checkPasswordSecurity()"
+            placeholder="nom@entreprise.com">
+
         </div>
-        
-        <div *ngIf="passwordContainsName && (passRef.dirty || passRef.touched)" class="text-danger mt-1" style="font-size: 13px;">
-          <small>Le mot de passe ne doit pas contenir votre nom, prénom ou nom de l'entreprise.</small>
-        </div>
+
+        <small
+          class="text-danger"
+          *ngIf="emailRef.invalid && (emailRef.dirty || emailRef.touched)">
+          Adresse email invalide.
+        </small>
+
       </div>
+
+      <!-- Password -->
+
+      <div class="mb-3">
+
+        <label class="form-label fw-semibold">
+          Mot de passe
+        </label>
+
+        <div class="input-group">
+
+          <span class="input-group-text">
+            <i class="bi bi-lock-fill"></i>
+          </span>
+
+          <input
+            type="password"
+            class="form-control"
+            name="password"
+            [(ngModel)]="user.password"
+            #passRef="ngModel"
+            required
+            pattern="^(?=.*[A-Z])(?=.*[!@#\$%\^&\*\(\)_\+\-\=\[\]\{\};':&quot;\\|,.<>\/\?]).{8,}$"
+            (input)="checkPasswordSecurity()"
+            placeholder="********">
+
+        </div>
+
+        <small
+          class="text-danger"
+          *ngIf="passRef.invalid && (passRef.dirty || passRef.touched)">
+          Minimum 8 caractères, une majuscule et un caractère spécial.
+        </small>
+
+        <small
+          class="text-danger"
+          *ngIf="passwordContainsName">
+          Le mot de passe ne doit pas contenir votre nom, prénom ou le nom de l'entreprise.
+        </small>
+
+      </div>
+
+      <!-- Rôle -->
 
       <div class="mb-4">
-        <label class="form-label d-block">rôle </label>
-        
-        <div class="form-check form-check-inline">
-          <input 
-            class="form-check-input" 
-            type="radio" 
-            name="role" 
-            id="roleEmploye" 
-            value="Employe" 
-            [(ngModel)]="user.role">
-          <label class="form-check-label" for="roleEmploye">Employe</label>
+
+        <label class="form-label fw-semibold">
+
+          Rôle
+
+        </label>
+
+        <div class="role-container">
+
+          <label class="role-card">
+
+            <input
+              type="radio"
+              name="role"
+              value="Employe"
+              [(ngModel)]="user.role">
+
+            <i class="bi bi-person-workspace"></i>
+
+            <span>Employé</span>
+
+          </label>
+
+          <label class="role-card">
+
+            <input
+              type="radio"
+              name="role"
+              value="Manager"
+              [(ngModel)]="user.role">
+
+            <i class="bi bi-person-badge-fill"></i>
+
+            <span>Manager</span>
+
+          </label>
+
         </div>
-        
-        <div class="form-check form-check-inline">
-          <input 
-            class="form-check-input" 
-            type="radio" 
-            name="role" 
-            id="roleManager" 
-            value="Manager" 
-            [(ngModel)]="user.role">
-          <label class="form-check-label" for="roleManager">Manager</label>
-        </div>
+
       </div>
 
-      <button class="btn btn-success w-100 py-2 mb-3" type="submit" [disabled]="signupForm.invalid || passwordContainsName">
+      <!-- Bouton -->
+
+      <button
+        class="btn btn-success signup-btn"
+        type="submit"
+        [disabled]="signupForm.invalid || passwordContainsName">
+
+        <i class="bi bi-check-circle me-2"></i>
+
         Créer mon compte
+
       </button>
 
+      <hr>
+
       <div class="text-center">
-        <span class="text-muted">Déjà inscrit ? </span>
-        <a routerLink="/login" class="text-success text-decoration-none fw-bold">Se connecter</a>
+
+        <span class="text-muted">
+
+          Vous avez déjà un compte ?
+
+        </span>
+
+        <a
+          routerLink="/login"
+          class="register-link">
+
+          Se connecter
+
+        </a>
+
       </div>
+
     </form>
 
   </div>
+
 </div>

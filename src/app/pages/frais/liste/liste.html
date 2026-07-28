@@ -1,108 +1,147 @@
-<div class="mb-3">
-  <input 
-    type="text"
-    class="form-control"
-    placeholder="Rechercher..."
-    [(ngModel)]="fraisRecherche"
-    (input)="filtrerFrais()">
+
+
+    <!-- Single Line Header: Title + Button + Filter Pills -->
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+  
+  <!-- Section Gauche: Title + Nouveau Frais -->
+  <div class="d-flex align-items-center gap-3">
+    <h2 class="expensify-title m-0 fw-bold fs-4 text-nowrap">
+      📑 Mes Notes de Frais
+    </h2>
+    <button class="btn btn-expensify-primary rounded-pill px-3 py-1-5 fw-semibold text-nowrap" (click)="openCreateModal()">
+      ➕ Nouveau Frais
+    </button>
+  </div>
+
+  <!-- Section Droite: Status Filter Pills -->
+  <div class="filter-pills-container d-flex align-items-center p-1 bg-white border rounded-pill shadow-sm">
+    <button class="pill-btn" [class.active]="statutFiltre === ''" (click)="filtrerParStatut('')">
+      Tous
+    </button>
+    <button class="pill-btn" [class.active]="statutFiltre === 'Brouillon'" (click)="filtrerParStatut('Brouillon')">
+      📝 Brouillon
+    </button>
+    <button class="pill-btn" [class.active]="statutFiltre === 'Soumis'" (click)="filtrerParStatut('Soumis')">
+      ⏳ En attente
+    </button>
+    <button class="pill-btn" [class.active]="statutFiltre === 'Approved'" (click)="filtrerParStatut('Approved')">
+      👍 Approuvés
+    </button>
+    <button class="pill-btn" [class.active]="statutFiltre === 'Rejected'" (click)="filtrerParStatut('Rejected')">
+      ❌ Rejetés
+    </button>
+  </div>
+
 </div>
-
-
-<div class="container-fluid pt-4 px-4">
-  <div class="card shadow-sm border-0" style="border-radius: 8px; overflow: hidden;">
-    <!-- En-tête -->
-    <div class="card-header text-white px-4 py-3 d-flex justify-content-between align-items-center" style="background-color: #1e7e4e;">
-      <h5 class="mb-0" style="font-weight: 600;">Mes Notes de Frais</h5>
-      <button class="btn btn-light btn-sm" (click)="openCreateModal()" style="color: #1e7e4e; font-weight: 600;">
-        <i class="bi bi-plus-circle"></i> Nouveau Frais
-      </button>
+  <!-- Search & Sorting Inputs Row -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-8">
+      <div class="position-relative">
+        <input 
+          type="text" 
+          class="form-control expensify-search ps-4 pe-3 py-2 shadow-sm border-0" 
+          placeholder="🔍 Rechercher par mission, catégorie, montant..." 
+          [(ngModel)]="fraisRecherche" 
+          (input)="appliquerFiltresEtTri()">
+      </div>
     </div>
+    
+    <div class="col-md-4">
+      <select class="form-select expensify-search py-2 shadow-sm border-0" [(ngModel)]="sortOption" (change)="changerTriOption()">
+        <option value="date-desc">📅 Date : Plus récent</option>
+        <option value="date-asc">📅 Date : Plus ancien</option>
+        <option value="montant-desc">💰 Montant : Plus élevé</option>
+        <option value="montant-asc">💰 Montant : Moins élevé</option>
+      </select>
+    </div>
+  </div>
 
-    <!-- Tableau -->
-    <div class="card-body p-0">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
+  <!-- Table Container (Stylé exactement comme la maquette) -->
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0 custom-expensify-table">
+        <thead class="bg-light-header">
           <tr>
-            <th class="px-4">Mission</th>
-            <th>Catégorie</th>
-            <th>Montant</th>
-            <th>Date</th>
-            <th>Statut</th>
-            <th class="text-end px-4">Actions</th>
+            <th class="py-3 px-4 text-uppercase fw-bold text-secondary fs-7">MISSION</th>
+            <th class="py-3 text-uppercase fw-bold text-secondary fs-7">CATÉGORIE</th>
+            <th class="py-3 text-uppercase fw-bold text-secondary fs-7">MONTANT</th>
+            <th class="py-3 text-uppercase fw-bold text-secondary fs-7">DATE</th>
+            <th class="py-3 text-uppercase fw-bold text-secondary fs-7">STATUT</th>
+            <th class="py-3 text-center text-uppercase fw-bold text-secondary fs-7">ACTIONS / DÉTAILS</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let f of (fraisRecherche ? mesFraisFiltres : mesFrais)">
-            <td class="px-4">{{ f.missionNom }}</td>
-            <td>{{ f.categorie }}</td>
-            <td>{{ f.montant | number:'1.2-2' }} DT</td>
-            <td>{{ f.date | date:'dd/MM/yyyy' }}</td>
+          <tr *ngFor="let f of paginatedFrais">
+            <td class="px-4 fw-semibold text-dark">{{ f.missionNom }}</td>
+            <td class="text-secondary fw-medium">{{ f.categorie }}</td>
+            <td class="fw-bold text-success">{{ f.montant | number:'1.2-2' }} DT</td>
+            <td class="text-secondary">{{ f.date | date:'dd/MM/yyyy' }}</td>
+            
+            <!-- Badges -->
             <td>
-              <span class="badge" [ngClass]="{
-                'bg-secondary': f.statut === 'Brouillon',
-                'bg-warning': f.statut === 'Soumis',
-                'bg-success': f.statut === 'Approved',
-                'bg-danger': f.statut === 'Rejected'
-              }">{{ f.statut }}</span>
+              <span class="exp-badge" [ngClass]="{
+                  'brouillon': f.statut === 'Brouillon',
+                  'submitted': f.statut === 'Soumis' || f.statut === 'En attente',
+                  'approved': f.statut === 'Approved' || f.statut === 'Approuvé',
+                  'rejected': f.statut === 'Rejected' || f.statut === 'Rejeté'
+                }">
+                {{ f.statut }}
+              </span>
             </td>
-            <td class="text-end px-4">
-  <div class="btn-group">
-    <!-- Voir -->
-    <button class="btn btn-sm btn-outline-info me-1" (click)="voir(f.id)" title="Voir">
-      <i class="bi bi-eye"></i>
-    </button>
 
-    <!-- Modifier -->
-    <button class="btn btn-sm btn-outline-primary me-1" 
-            [disabled]="!['Brouillon', 'Rejected'].includes(f.statut)" 
-            (click)="modifier(f)" title="Modifier">
-      <i class="bi bi-pencil-square"></i>
-    </button>
-
-    <!-- Supprimer -->
-    <button class="btn btn-sm btn-outline-danger me-1" 
-            [disabled]="f.statut !== 'Brouillon'" 
-            (click)="openDeleteModal(f.id)" title="Supprimer">
-      <i class="bi bi-trash"></i>
-    </button>
-
-    <!-- Soumettre -->
-    <button class="btn btn-sm btn-outline-success" 
-            [disabled]="!['Brouillon', 'Rejected'].includes(f.statut)" 
-            (click)="soumettre(f.id)" title="Soumettre">
-      <i class="bi bi-send"></i>
-    </button>
-  </div>
-</td>
+            <!-- Actions Buttons -->
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-1">
+                <button class="btn btn-sm btn-icon-action info" (click)="voir(f.id)" title="Détails">👁️</button>
+                <button class="btn btn-sm btn-icon-action primary" [disabled]="!['Brouillon', 'Rejected', 'Rejeté'].includes(f.statut)" (click)="modifier(f)" title="Modifier">✏️</button>
+                <button class="btn btn-sm btn-icon-action danger" [disabled]="f.statut !== 'Brouillon'" (click)="openDeleteModal(f.id)" title="Supprimer">🗑️</button>
+                <button class="btn btn-sm btn-icon-action success" [disabled]="!['Brouillon', 'Rejected', 'Rejeté'].includes(f.statut)" (click)="soumettre(f.id)" title="Soumettre">🚀</button>
+              </div>
+            </td>
           </tr>
-          <tr *ngIf="mesFrais.length === 0">
-            <td colspan="6" class="text-center py-4 text-muted">Aucune note de frais enregistrée.</td>
+
+          <tr *ngIf="mesFraisFiltres.length === 0">
+            <td colspan="6" class="text-center py-5 text-muted fw-semibold">
+              Aucune note de frais trouvée.
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
-</div>
 
-<!-- Modal Création -->
+    <!-- Pagination Footer -->
+    <div class="card-footer bg-white border-0 py-3 d-flex justify-content-between align-items-center" *ngIf="totalPages > 1">
+      <span class="text-muted small">
+        Page {{ currentPage }} sur {{ totalPages }} ({{ mesFraisFiltres.length }} frais)
+      </span>
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-1" [disabled]="currentPage === 1" (click)="changerPage(currentPage - 1)">Précédent</button>
+        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" [disabled]="currentPage === totalPages" (click)="changerPage(currentPage + 1)">Suivant</button>
+      </div>
+    </div>
+  </div>
+
+
+
+<!-- Modales (Création, Edit, Delete, Details) -->
 <div class="modal fade" id="createModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content" style="border-radius: 8px;">
-      <div class="modal-header text-white" style="background-color: #1e7e4e;">
-        <h5 class="modal-title">Créer un Frais</h5>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header text-white" style="background-color: #19774d;">
+        <h5 class="modal-title fw-bold">Nouveau Frais</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body p-4">
         <form #createForm="ngForm" class="row g-3">
           <div class="col-md-6">
-            <label class="form-label">Mission</label>
+            <label class="form-label fw-bold">Mission</label>
             <select class="form-select" [(ngModel)]="fraisToCreate.missionId" name="missionId" required>
               <option [ngValue]="0" disabled>Choisir une mission...</option>
               <option *ngFor="let m of missions" [ngValue]="m.id">{{ m.nom }}</option>
             </select>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Catégorie</label>
+            <label class="form-label fw-bold">Catégorie</label>
             <select class="form-select" [(ngModel)]="fraisToCreate.categorie" name="categorie">
               <option value="Repas">Repas</option>
               <option value="Transport">Transport</option>
@@ -110,45 +149,44 @@
             </select>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Montant (DT)</label>
+            <label class="form-label fw-bold">Montant (DT)</label>
             <input type="number" class="form-control" [(ngModel)]="fraisToCreate.montant" name="montant" required>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Date</label>
+            <label class="form-label fw-bold">Date</label>
             <input type="date" class="form-control" [(ngModel)]="fraisToCreate.date" name="date" required>
           </div>
           <div class="col-12">
-            <label class="form-label">Commentaire</label>
+            <label class="form-label fw-bold">Commentaire</label>
             <textarea class="form-control" [(ngModel)]="fraisToCreate.commentaire" name="commentaire" rows="3"></textarea>
           </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button class="btn btn-success" [disabled]="createForm.invalid || fraisToCreate.missionId === 0" (click)="saveCreate()">Enregistrer</button>
+      <div class="modal-footer border-top-0">
+        <button class="btn btn-light fw-bold" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-expensify-primary" [disabled]="createForm.invalid || fraisToCreate.missionId === 0" (click)="saveCreate()">Enregistrer</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal Modification -->
-<div class="modal fade" id="editModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content" style="border-radius: 8px;">
-      <div class="modal-header text-white" style="background-color: #1e7e4e;">
-        <h5 class="modal-title">Modifier le Frais</h5>
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header text-white" style="background-color: #19774d;">
+        <h5 class="modal-title fw-bold">Modifier le Frais</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body p-4">
         <form #editForm="ngForm" class="row g-3">
           <div class="col-md-6">
-            <label class="form-label">Mission</label>
+            <label class="form-label fw-bold">Mission</label>
             <select class="form-select" [(ngModel)]="fraisToEdit.missionId" name="missionId" required>
               <option *ngFor="let m of missions" [ngValue]="m.id">{{ m.nom }}</option>
             </select>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Catégorie</label>
+            <label class="form-label fw-bold">Catégorie</label>
             <select class="form-select" [(ngModel)]="fraisToEdit.categorie" name="categorie">
               <option value="Repas">Repas</option>
               <option value="Transport">Transport</option>
@@ -156,80 +194,76 @@
             </select>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Montant (DT)</label>
+            <label class="form-label fw-bold">Montant (DT)</label>
             <input type="number" class="form-control" [(ngModel)]="fraisToEdit.montant" name="montant" required>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Date</label>
+            <label class="form-label fw-bold">Date</label>
             <input type="date" class="form-control" [ngModel]="fraisToEdit.date | date:'yyyy-MM-dd'" (ngModelChange)="fraisToEdit.date = $event" name="date" required>
           </div>
           <div class="col-12">
-            <label class="form-label">Commentaire</label>
+            <label class="form-label fw-bold">Commentaire</label>
             <textarea class="form-control" [(ngModel)]="fraisToEdit.commentaire" name="commentaire" rows="3"></textarea>
           </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button class="btn btn-primary" (click)="saveEdit()">Enregistrer</button>
+      <div class="modal-footer border-top-0">
+        <button class="btn btn-light fw-bold" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-expensify-primary" (click)="saveEdit()">Enregistrer</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal Suppression -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
       <div class="modal-header">
-        <h5 class="modal-title">Confirmation</h5>
+        <h5 class="modal-title fw-bold">Confirmation</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">Êtes-vous sûr de vouloir supprimer cette note de frais ?</div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button class="btn btn-danger" (click)="confirmDelete()">Supprimer</button>
+      <div class="modal-body text-secondary">Êtes-vous sûr de vouloir supprimer cette note de frais ?</div>
+      <div class="modal-footer border-top-0">
+        <button class="btn btn-light fw-bold" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-danger fw-bold" (click)="confirmDelete()">Supprimer</button>
       </div>
     </div>
   </div>
 </div>
 
 <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
       <div class="modal-header">
-        <h5 class="modal-title">Détails de ma demande</h5>
+        <h5 class="modal-title fw-bold">Détails de ma demande</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-
-      <!-- Le *ngIf vérifie que les données sont bien là avant d'afficher -->
       <div class="modal-body" *ngIf="selectedFrais">
-        <div class="row mb-2">
-          <div class="col-6"><strong>Mission:</strong></div>
-          <div class="col-6">{{ selectedFrais.missionNom }}</div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">Mission:</span>
+          <span class="fw-bold">{{ selectedFrais.missionNom }}</span>
         </div>
-        <div class="row mb-2">
-          <div class="col-6"><strong>Responsable:</strong></div>
-          <div class="col-6">{{ selectedFrais.managerNom }} {{ selectedFrais.managerPrenom }}</div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">Responsable:</span>
+          <span class="fw-bold">{{ selectedFrais.managerNom }} {{ selectedFrais.managerPrenom }}</span>
         </div>
         <hr>
-        <div class="row mb-2">
-          <div class="col-6"><strong>Montant:</strong></div>
-          <div class="col-6">{{ selectedFrais.montant | number:'1.2-2' }} DT</div>
+        <div class="alert alert-danger mt-3 mb-0" *ngIf="['Rejected', 'Rejeté'].includes(selectedFrais.statut)">
+          <strong>Motif du rejet:</strong> {{ getDernierCommentaireRejet() }}
         </div>
-        <div class="row mb-2">
-          <div class="col-6"><strong>Commentaire:</strong></div>
-          <div class="col-6">{{ selectedFrais.commentaire || 'Aucun commentaire' }}</div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">Montant:</span>
+          <span class="fw-bold text-success">{{ selectedFrais.montant | number:'1.2-2' }} DT</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">Commentaire:</span>
+          <span>{{ selectedFrais.commentaire || '-' }}</span>
         </div>
         
-        <!-- Affichage spécifique si rejeté -->
-        <div class="alert alert-danger mt-3" *ngIf="selectedFrais.statut === 'Rejected'">
-          <strong>Motif du rejet:</strong> {{ selectedFrais.motifRejet }}
-        </div>
+        
       </div>
-      
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      <div class="modal-footer border-top-0">
+        <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Fermer</button>
       </div>
     </div>
   </div>

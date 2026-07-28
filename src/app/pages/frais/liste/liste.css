@@ -1,0 +1,186 @@
+/* Styling complet, moderne et très lisible */
+.expensify-wrapper {
+  background-color: #f8f9fa; /* Arrière-plan clair et propre */
+  color: #212529;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+/* Header & Titre principal */
+.expensify-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: nowrap; /* Conserve tout sur la même ligne */
+  gap: 1rem;
+}
+
+.expensify-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #136f45 !important; /* Vert foncé identique à l'image */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Bouton principal "Nouveau Frais" */
+.btn-expensify-primary {
+  background-color: #136f45 !important; /* Vert foncé identique à l'image */
+  color: #ffffff !important;
+  border: none;
+  font-size: 0.88rem;
+  padding: 0.45rem 1.2rem;
+  white-space: nowrap;
+  font-weight: 700;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+}
+
+.btn-expensify-primary:hover {
+  background-color: #0e5434 !important;
+}
+
+/* Filter Pills - Boutons de filtre de statut */
+.filter-pills-container {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background-color: #ffffff;
+  padding: 0.3rem;
+  border-radius: 30px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  flex-shrink: 0;
+}
+
+.pill-btn {
+  background: transparent;
+  border: none;
+  color: #495057;
+  padding: 0.45rem 1.1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.pill-btn:hover {
+  background-color: #e9ecef;
+  color: #212529;
+}
+
+.pill-btn.active {
+  background-color: #136f45 !important; /* Couleur verte active */
+  color: #ffffff !important;
+}
+
+/* Inputs de recherche et sélection */
+.expensify-search {
+  background-color: #ffffff !important;
+  border: 1px solid #ced4da !important;
+  color: #212529 !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1rem !important;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.expensify-search:focus {
+  border-color: #136f45 !important;
+  box-shadow: 0 0 0 0.2rem rgba(19, 111, 69, 0.15) !important;
+}
+
+/* Conteneur du Tableau & En-têtes */
+.expensify-table-container {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.custom-expensify-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-expensify-table th {
+  background-color: #e9ecef;
+  color: #212529;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1rem 1.25rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.custom-expensify-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #f0f0f0;
+  color: #212529;
+  vertical-align: middle;
+}
+
+/* Badges de Statut (Approved / Brouillon / Soumis / Rejected) */
+.exp-badge {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-block;
+  text-align: center;
+  min-width: 90px;
+}
+
+.exp-badge.approved {
+  background-color: #136f45 !important; /* Exactement le même vert que l'image */
+  color: #ffffff !important;
+}
+
+.exp-badge.brouillon {
+  background-color: #6c757d;
+  color: #ffffff;
+}
+
+.exp-badge.submitted {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.exp-badge.rejected {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+/* Boutons d'action dans le tableau (Voir, Modifier, Supprimer, Soumettre) */
+.btn-icon-action {
+  border: 1px solid #dee2e6;
+  background-color: #ffffff;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-icon-action:hover:not(:disabled) {
+  background-color: #e9ecef;
+  transform: translateY(-1px);
+}
+
+.btn-icon-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Taille de police pour les titres de colonnes */
+.fs-7 {
+  font-size: 0.78rem;
+}

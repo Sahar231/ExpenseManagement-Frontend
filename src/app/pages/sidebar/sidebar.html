@@ -1,47 +1,89 @@
-<!-- Sidebar -->
-<div class="d-flex" style="min-height: 100vh;">
-  <div class="sidebar text-white" style="width: 250px; background-color: #22834C;">
-    <div class="p-4 text-center border-bottom border-secondary">
-      <h5 class="mb-0">{{ userRole }}</h5>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+
+   
+
+
+    <!-- Profil -->
+    <div class="profile-section">
+
+      <div class="avatar">
+        <i class="bi bi-person-fill"></i>
+      </div>
+
+      <h6 class="username">
+        {{ userName || 'Utilisateur' }}
+      </h6>
+
+      <span class="badge-role">
+        {{ userRole }}
+      </span>
+
     </div>
-    
-    <div class="nav flex-column mt-3">
-      <!-- Tableau de bord -->
-      <a routerLink="/sidebar/tableau-de-bord" class="nav-link text-white py-3 px-4">
-        <i class="bi bi-house-door me-3"></i> Tableau de bord
-      </a>
-      
-      <!-- Expenses -->
-      <a routerLink="/sidebar/frais/liste" class="nav-link text-white py-3 px-4">
-        <i class="bi bi-wallet2 me-3"></i> Expenses
+
+    <!-- Menu -->
+    <nav class="menu">
+
+      <a
+        routerLink="/sidebar/tableau-de-bord"
+        routerLinkActive="active"
+        class="menu-item">
+
+        <i class="bi bi-house-door-fill"></i>
+        <span>Tableau de bord</span>
+
       </a>
 
-      <!-- Validation (Manager uniquement) -->
-      <a *ngIf="userRole === 'Manager'" 
-         routerLink="/sidebar/frais/validation" 
-         class="nav-link text-white py-3 px-4">
-         <i class="bi bi-check2-circle me-3"></i> Validation
+      <a
+        routerLink="/sidebar/frais/liste"
+        routerLinkActive="active"
+        class="menu-item">
+
+        <i class="bi bi-wallet2"></i>
+        <span>Expenses</span>
+
       </a>
 
-      
-    </div>
-    
-    <!-- Logout -->
-    <div class="mt-auto p-3 w-100">
-      <button class="btn btn-outline-light w-100" (click)="onLogout()">
-        <i class="bi bi-box-arrow-left me-2"></i> Log Out
-      </button>
-    </div>
-  </div>
+      <a
+        *ngIf="userRole === 'Manager'"
+        routerLink="/sidebar/frais/validation"
+        routerLinkActive="active"
+        class="menu-item">
 
-  <!-- Contenu Principal -->
-  <div class="flex-grow-1 bg-light">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3">
-      <span class="navbar-brand mb-0 h1 text-secondary">Bienvenue, {{ userName }}</span>
+        <i class="bi bi-check2-circle"></i>
+        <span>Validation</span>
+
+      </a>
+
     </nav>
 
-    <div class="p-4">
+    <!-- Logout -->
+    <div class="logout">
+
+      <button
+        class="logout-btn"
+        (click)="onLogout()">
+
+        <i class="bi bi-box-arrow-left"></i>
+
+        <span>Log Out</span>
+
+      </button>
+
+    </div>
+
+  </aside>
+
+  <!-- Contenu -->
+  <main class="content">
+
+    
+    <div class="page-content">
       <router-outlet></router-outlet>
     </div>
-  </div>
+
+  </main>
+
 </div>

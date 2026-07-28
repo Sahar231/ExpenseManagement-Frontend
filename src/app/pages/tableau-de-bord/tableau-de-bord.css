@@ -1,0 +1,120 @@
+/* Container flex pour mettre toutes les 5 cartes sur une seule ligne */
+.stats-row-container {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  overflow-x: auto; /* Scroll horizontal automatique sur petit écran */
+  padding-bottom: 0.5rem;
+}
+
+/* Chaque Carte prend exactement 1/5 de la largeur */
+.stat-card-item {
+  flex: 1 1 0;
+  min-width: 200px; /* Evite qu'elles soient trop réduites sur mobile */
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  transition: all 0.25 ease;
+}
+
+.stat-card-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+}
+
+.stat-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.stat-value small {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Icons Styles */
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* --- Couleurs Spécifiques et Variées pour chaque Carte --- */
+
+/* 1. En attente (Jaune) */
+.card-warning { border-top: 4px solid #ffc107; }
+.icon-warning { background-color: #fff8e1; }
+
+/* 2. Total Approuvé (Vert) */
+.card-success { border-top: 4px solid #19774d; }
+.icon-success { background-color: #e8f5e9; }
+
+/* 3. Total Rejeté (Rouge/Rose doux) */
+.card-rejected { border-top: 4px solid #dc3545; background-color: #fff8f8; }
+.text-rejected { color: #dc3545; }
+.icon-rejected { background-color: #ffebee; }
+
+/* 4. Total ce mois (Bleu Cyan Moderne) */
+.card-monthly { border-top: 4px solid #0284c7; background-color: #f0f9ff; }
+.text-monthly { color: #0284c7; }
+.icon-monthly { background-color: #e0f2fe; }
+
+/* 5. Total demandes (Gris Foncée) */
+.card-dark { border-top: 4px solid #495057; }
+.icon-dark { background-color: #f1f3f5; }
+
+/* Section Chart */
+.custom-chart-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  padding: 1.25rem;
+}
+
+.header-accent {
+  width: 4px;
+  height: 18px;
+  background-color: #19774d;
+  border-radius: 2px;
+}
+
+.chart-title {
+  font-weight: 700;
+  color: #212529;
+}
+
+.custom-select {
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
