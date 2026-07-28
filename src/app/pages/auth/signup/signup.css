@@ -1,0 +1,177 @@
+.signup-page{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+
+    /* Fond blanc */
+    background:#f8f9fa;
+}
+
+.signup-card{
+    width:100%;
+    max-width:600px;
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:40px;
+
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+
+    border:1px solid #e9ecef;
+}
+
+/* Logo */
+
+.logo{
+
+    width:80px;
+
+    height:80px;
+
+    border-radius:50%;
+
+    background:#22834C;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:35px;
+
+    margin:auto;
+
+    box-shadow:0 8px 20px rgba(34,131,76,.25);
+
+}
+
+/* Champs */
+
+.form-control{
+
+    height:48px;
+
+    border-left:none;
+
+}
+
+.form-control:focus{
+
+    border-color:#22834C;
+
+    box-shadow:0 0 0 .2rem rgba(34,131,76,.15);
+
+}
+
+.input-group-text{
+
+    background:#fff;
+
+    border-right:none;
+
+    color:#22834C;
+
+}
+
+/* Bouton */
+
+.signup-btn{
+
+    width:100%;
+
+    height:50px;
+
+    border-radius:10px;
+
+    background:#22834C;
+
+    border:none;
+
+    font-weight:600;
+
+}
+
+.signup-btn:hover{
+
+    background:#1c6d3f;
+
+}
+
+/* Cartes rôle */
+
+.role-container{
+
+    display:flex;
+
+    gap:15px;
+
+}
+
+.role-card{
+
+    flex:1;
+
+    border:2px solid #e5e5e5;
+
+    border-radius:12px;
+
+    padding:18px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    background:white;
+
+}
+
+.role-card:hover{
+
+    border-color:#22834C;
+
+    background:#f7fcf8;
+
+}
+
+.role-card i{
+
+    display:block;
+
+    font-size:28px;
+
+    color:#22834C;
+
+    margin-bottom:8px;
+
+}
+
+.role-card input{
+
+    display:none;
+
+}
+
+.register-link{
+
+    color:#22834C;
+
+    font-weight:600;
+
+    text-decoration:none;
+
+}
+
+.register-link:hover{
+
+    text-decoration:underline;
+
+}

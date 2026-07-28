@@ -1,77 +1,95 @@
 <div class="container-fluid pt-4 px-4" *ngIf="statistiques; else loading">
-  <div class="row g-4">
+
+  <!-- Horizontal Scroll Container / Flex Row for 5 Cards in One Line -->
+  <div class="stats-row-container mb-4">
     
-    <!-- En attente -->
-    <div class="col-sm-6 col-xl-4">
-      <div class="card bg-warning text-dark border-0 shadow-sm h-100">
-        <div class="card-body d-flex align-items-center justify-content-between p-4">
-          <div>
-            <h6 class="mb-2">En attente de validation</h6>
-            <h3 class="mb-0 fw-bold">{{ statistiques.enAttente }}</h3>
-          </div>
-          <div class="fs-1 opacity-50">⏳</div>
-        </div>
+    <!-- 1. En attente -->
+    <div class="stat-card-item card-warning">
+      <div class="stat-content">
+        <span class="stat-label">En attente</span>
+        <h3 class="stat-value text-warning">{{ statistiques.enAttente }}</h3>
       </div>
+      <div class="stat-icon icon-warning">⏳</div>
     </div>
 
-    <!-- Total Approuvé -->
-    <div class="col-sm-6 col-xl-4">
-      <div class="card bg-success text-white border-0 shadow-sm h-100">
-        <div class="card-body d-flex align-items-center justify-content-between p-4">
-          <div>
-            <h6 class="mb-2">Total Approuvé</h6>
-            <h3 class="mb-0 fw-bold">{{ statistiques.montantTotalApprouve | number:'1.3-3' }} DT</h3>
-          </div>
-          <div class="fs-1 opacity-50">💰</div>
-        </div>
+    <!-- 2. Total Approuvé -->
+    <div class="stat-card-item card-success">
+      <div class="stat-content">
+        <span class="stat-label">Total Approuvé</span>
+        <h3 class="stat-value text-success">
+          {{ statistiques.montantTotalApprouve | number:'1.2-2' }} <small>DT</small>
+        </h3>
       </div>
+      <div class="stat-icon icon-success">💰</div>
     </div>
 
-    <!-- Total Demandes -->
-    <div class="col-sm-6 col-xl-4">
-      <div class="card bg-primary text-white border-0 shadow-sm h-100">
-        <div class="card-body d-flex align-items-center justify-content-between p-4">
-          <div>
-            <h6 class="mb-2">Total des demandes</h6>
-            <h3 class="mb-0 fw-bold">{{ statistiques.totalFrais }}</h3>
-          </div>
-          <div class="fs-1 opacity-50">📊</div>
-        </div>
+    <!-- 3. Total Rejeté (جديد: لون وردي أحمر أنيق) -->
+    <div class="stat-card-item card-rejected">
+      <div class="stat-content">
+        <span class="stat-label">Total Rejeté</span>
+        <h3 class="stat-value text-rejected">{{ statistiques.totalRejete || 0 }}</h3>
       </div>
+      <div class="stat-icon icon-rejected">❌</div>
+    </div>
+
+    <!-- 4. Total pour ce mois (جديد: لون أزرق سماوي فريد) -->
+    <div class="stat-card-item card-monthly">
+      <div class="stat-content">
+        <span class="stat-label">Total ce mois</span>
+        <h3 class="stat-value text-monthly">
+          {{ (statistiques.montantCeMois || 0) | number:'1.2-2' }} <small>DT</small>
+        </h3>
+      </div>
+      <div class="stat-icon icon-monthly">📅</div>
+    </div>
+
+    <!-- 5. Total Demandes -->
+    <div class="stat-card-item card-dark">
+      <div class="stat-content">
+        <span class="stat-label">Total demandes</span>
+        <h3 class="stat-value text-dark">{{ statistiques.totalFrais }}</h3>
+      </div>
+      <div class="stat-icon icon-dark">📊</div>
     </div>
 
   </div>
+
+  <!-- Section Graphique UNIQUE avec Filtre -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card custom-chart-card">
+        
+        <!-- En-tête du Graphique -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <div class="header-accent"></div>
+            <h5 class="chart-title m-0">Répartition des frais</h5>
+          </div>
+
+          <div style="min-width: 180px;">
+            <select class="form-select custom-select" [(ngModel)]="modeFiltre" (change)="changerModeFiltre()">
+              <option value="statut">Par Statut</option>
+              <option value="mission">Par Mission</option>
+              <option value="employe" *ngIf="isManager">Par Employé</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Canvas du Graphique -->
+        <div class="chart-body" style="position: relative; height: 310px;">
+          <canvas id="statutChart"></canvas>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </div>
 
+<!-- Loading Template -->
 <ng-template #loading>
   <div class="text-center py-5">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-2 text-muted">Chargement des statistiques...</p>
+    <div class="spinner-border text-success" role="status"></div>
+    <p class="mt-2 text-muted fw-bold">Chargement des statistiques...</p>
   </div>
 </ng-template>
-
-<!-- Section Graphique UNIQUE avec Filtre -->
-<div class="row mt-4">
-  <div class="col-12">
-    <div class="card border-0 shadow-sm p-4">
-      
-      <!-- En-tête avec le filtre d'affichage demandé -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="card-title m-0">Répartition des frais</h5>
-        <div class="w-25">
-          <select class="form-select form-select-sm" [(ngModel)]="modeFiltre" (change)="changerModeFiltre()">
-            <option value="statut">Par Statut</option>
-            <option value="mission">Par Mission</option>
-          
-            <option value="employe" *ngIf="isManager">Par Employé</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="position: relative; height: 300px;">
-        <canvas id="statutChart"></canvas>
-      </div>
-
-    </div>
-  </div>
-</div>

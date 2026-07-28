@@ -1,104 +1,184 @@
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { FraisService } from '../../../core/services/frais';
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 
 declare var bootstrap: any;
+
+export interface Mission {
+  id: number;
+  nom: string;
+}
+
+export interface Approval {
+  statut: string;
+  commentaire?: string;
+}
+
+export interface FraisItem {
+  id: number;
+  missionId?: number;
+  missionNom?: string;
+  categorie: string;
+  montant: number;
+  date: string;
+  statut: string;
+  commentaire?: string;
+  managerNom?: string;
+  managerPrenom?: string;
+  motifRejet?: string;
+  dernierCommentaire?: string;
+  approvals?: Approval[];
+}
 
 @Component({
   selector: 'app-liste',
   standalone: true,
-  imports: [CommonModule, FormsModule], 
-  templateUrl: './liste.html'
+  imports: [CommonModule, FormsModule],
+  templateUrl: './liste.html',
+  styleUrls: ['./liste.css']
 })
 export class ListeComponent implements OnInit, OnDestroy {
   @ViewChild('detailsModalRef') detailsModalRef!: ElementRef;
-  
-  mesFrais: any[] = [];
-  missions: any[] = [];
-  fraisRecherche: string = '';
-mesFraisFiltres: any[] = [];
-  fraisToCreate: any = {};
-  fraisToEdit: any = {};
-  idToDelete: number | null = null;
-  selectedFrais: any = null;
 
-  // Track the element that opened the modal to restore focus later
+  mesFrais: FraisItem[] = [];
+  mesFraisFiltres: FraisItem[] = [];
+  missions: Mission[] = [];
+
+  // Filtres
+  fraisRecherche: string = '';
+  statutFiltre: string = '';
+
+  // Options de tri
+  sortOption: string = 'date-desc';
+
+  // Pagination
+  currentPage: number = 1;
+  pageSize: number = 8;
+
+  // Modales & Sélection
+  fraisToCreate: Partial<FraisItem> = {};
+  fraisToEdit: Partial<FraisItem> = {};
+  idToDelete: number | null = null;
+  selectedFrais: FraisItem | null = null;
+
   private lastActiveElement: HTMLElement | null = null;
   private modalHiddenListener: (() => void) | null = null;
 
-  constructor(private fraisService: FraisService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private fraisService: FraisService, 
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.chargerFrais();
     this.chargerMissions();
     this.setupModalFocusListener();
   }
 
-  ngOnDestroy() {
-    // Cleanup vanilla event listeners to prevent memory leaks
+  ngOnDestroy(): void {
     const element = document.getElementById('detailsModal');
     if (element && this.modalHiddenListener) {
       element.removeEventListener('hidden.bs.modal', this.modalHiddenListener);
     }
   }
-  filtrerFrais(): void {
 
-  const recherche = this.fraisRecherche.toLowerCase();
-
-  if (recherche === '') {
-    this.mesFraisFiltres = this.mesFrais;
-    return;
+  // --- CHARGEMENT DES DONNÉES ---
+  chargerFrais(): void {
+    this.fraisService.getMesFrais().subscribe({
+      next: (data) => {
+        this.mesFrais = data || [];
+        this.appliquerFiltresEtTri();
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erreur chargement des frais:', err)
+    });
   }
 
-  this.mesFraisFiltres = this.mesFrais.filter(f => {
+  chargerMissions(): void {
+    this.fraisService.getMissions().subscribe({
+      next: (data) => {
+        this.missions = data || [];
+      },
+      error: (err) => console.error('Erreur chargement des missions:', err)
+    });
+  }
 
-    return (
-      f.employeeNom?.toLowerCase().includes(recherche) ||
-      f.employeePrenom?.toLowerCase().includes(recherche) ||
-      f.missionNom?.toLowerCase().includes(recherche) ||
-      f.categorie?.toLowerCase().includes(recherche) ||
-      f.statut?.toLowerCase().includes(recherche)
-    );
+  // --- FILTRES & TRI ---
+  filtrerParStatut(statut: string): void {
+    this.statutFiltre = statut;
+    this.appliquerFiltresEtTri();
+  }
 
-  });
+  changerTriOption(): void {
+    this.appliquerFiltresEtTri();
+  }
 
-}
+  appliquerFiltresEtTri(): void {
+    let result = [...this.mesFrais];
 
-  // --- FOCUS RESTORATION SETUP ---
-  private setupModalFocusListener() {
-    // We wait for the modal element to exist in the DOM
-    setTimeout(() => {
-      const element = document.getElementById('detailsModal');
-      if (element) {
-        this.modalHiddenListener = () => {
-          // Restore focus to the original trigger button once modal is completely hidden
-          if (this.lastActiveElement) {
-            this.lastActiveElement.focus();
-            this.lastActiveElement = null; // Clear tracking
-          }
-        };
-        element.addEventListener('hidden.bs.modal', this.modalHiddenListener);
+    // 1. Recherche globale
+    if (this.fraisRecherche.trim() !== '') {
+      const recherche = this.fraisRecherche.toLowerCase();
+      result = result.filter(f =>
+        f.missionNom?.toLowerCase().includes(recherche) ||
+        f.categorie?.toLowerCase().includes(recherche) ||
+        f.statut?.toLowerCase().includes(recherche) ||
+        f.montant?.toString().includes(recherche)
+      );
+    }
+
+    // 2. Filtre par statut
+    if (this.statutFiltre !== '') {
+      if (this.statutFiltre === 'Soumis') {
+        result = result.filter(f => f.statut === 'Soumis' || f.statut === 'En attente');
+      } else if (this.statutFiltre === 'Approved') {
+        result = result.filter(f => f.statut === 'Approved' || f.statut === 'Approuvé');
+      } else if (this.statutFiltre === 'Rejected') {
+        result = result.filter(f => f.statut === 'Rejected' || f.statut === 'Rejeté');
+      } else {
+        result = result.filter(f => f.statut === this.statutFiltre);
+      }
+    }
+
+    // 3. Tri
+    result.sort((a, b) => {
+      switch (this.sortOption) {
+        case 'date-desc':
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        case 'date-asc':
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        case 'montant-desc':
+          return b.montant - a.montant;
+        case 'montant-asc':
+          return a.montant - b.montant;
+        default:
+          return 0;
       }
     });
+
+    this.mesFraisFiltres = result;
+    this.currentPage = 1;
   }
 
-  // --- CHARGEMENT ---
-  chargerFrais() {
-    this.fraisService.getMesFrais().subscribe(data => {
-      this.mesFrais = data;
-      this.cdr.detectChanges();
-    });
+  // --- PAGINATION ---
+  get paginatedFrais(): FraisItem[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.mesFraisFiltres.slice(startIndex, startIndex + this.pageSize);
   }
 
-  chargerMissions() {
-    this.fraisService.getMissions().subscribe(data => {
-      this.missions = data;
-    });
+  get totalPages(): number {
+    return Math.ceil(this.mesFraisFiltres.length / this.pageSize) || 1;
   }
 
-  // --- LOGIQUE DES MODALES ---
-  private showModal(id: string) {
+  changerPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  // --- MODALES BOOTSTRAP ---
+  private showModal(id: string): void {
     const element = document.getElementById(id);
     if (element) {
       const modal = bootstrap.Modal.getOrCreateInstance(element);
@@ -106,64 +186,79 @@ mesFraisFiltres: any[] = [];
     }
   }
 
-  private hideModal(id: string) {
+  private hideModal(id: string): void {
     const element = document.getElementById(id);
     if (element) {
       const modal = bootstrap.Modal.getInstance(element);
       modal?.hide();
     }
   }
- 
+
+  private setupModalFocusListener(): void {
+    setTimeout(() => {
+      const element = document.getElementById('detailsModal');
+      if (element) {
+        this.modalHiddenListener = () => {
+          if (this.lastActiveElement) {
+            this.lastActiveElement.focus();
+            this.lastActiveElement = null;
+          }
+        };
+        element.addEventListener('hidden.bs.modal', this.modalHiddenListener);
+      }
+    });
+  }
+
   // --- ACTIONS ---
-  openCreateModal() {
-    this.fraisToCreate = { missionId: 0, categorie: 'Repas', montant: null, date: '', commentaire: '' };
+  openCreateModal(): void {
+    this.fraisToCreate = { missionId: 0, categorie: 'Repas', montant: undefined, date: '', commentaire: '' };
     this.showModal('createModal');
   }
 
-  modifier(f: any) {
+  modifier(f: FraisItem): void {
     this.fraisToEdit = { ...f };
     this.showModal('editModal');
   }
 
-  voir(id: number) {
-    // 1. Remember the element (the "Voir" button) that was clicked
+  voir(id: number): void {
     this.lastActiveElement = document.activeElement as HTMLElement;
 
-    // 2. Charger les données fraîches via votre service corrigé
-    this.fraisService.getDetails(id).subscribe(data => {
-      this.selectedFrais = data;
-      this.cdr.detectChanges(); // Ensure Angular renders the data into the modal template first
-      
-      // 3. Ouvrir le modal une fois les données prêtes
-      this.showModal('detailsModal');
+    this.fraisService.getDetails(id).subscribe({
+      next: (data) => {
+        this.selectedFrais = data;
+        this.cdr.detectChanges();
+        this.showModal('detailsModal');
+      },
+      error: (err) => console.error('Erreur chargement détails:', err)
     });
   }
 
-  openDeleteModal(id: number) {
+  openDeleteModal(id: number): void {
     this.idToDelete = id;
     this.showModal('deleteModal');
   }
 
-  // --- SAUVEGARDE ---
-  saveCreate() {
+  saveCreate(): void {
     this.fraisService.creerFrais(this.fraisToCreate).subscribe(() => {
       this.chargerFrais();
       this.hideModal('createModal');
     });
   }
 
-  saveEdit() {
-    this.fraisService.modifier(this.fraisToEdit.id, this.fraisToEdit).subscribe(() => {
-      this.chargerFrais();
-      this.hideModal('editModal');
-    });
+  saveEdit(): void {
+    if (this.fraisToEdit.id) {
+      this.fraisService.modifier(this.fraisToEdit.id, this.fraisToEdit).subscribe(() => {
+        this.chargerFrais();
+        this.hideModal('editModal');
+      });
+    }
   }
 
-  soumettre(id: number) {
+  soumettre(id: number): void {
     this.fraisService.soumettre(id).subscribe(() => this.chargerFrais());
   }
 
-  confirmDelete() {
+  confirmDelete(): void {
     if (this.idToDelete) {
       this.fraisService.supprimer(this.idToDelete).subscribe(() => {
         this.chargerFrais();
@@ -172,9 +267,20 @@ mesFraisFiltres: any[] = [];
     }
   }
 
+  // --- HELPER DÉTAILS ---
   getDernierCommentaireRejet(): string {
-    if (!this.selectedFrais?.approvals) return 'Aucun commentaire.';
-    const rejet = this.selectedFrais.approvals.filter((a: any) => a.statut === 'Rejected').pop();
-    return rejet ? rejet.commentaire : 'Aucun motif précisé.';
+    if (!this.selectedFrais) return 'Aucun motif précisé.';
+
+    if (this.selectedFrais.motifRejet) return this.selectedFrais.motifRejet;
+    if (this.selectedFrais.dernierCommentaire) return this.selectedFrais.dernierCommentaire;
+
+    if (Array.isArray(this.selectedFrais.approvals)) {
+      const rejet = this.selectedFrais.approvals
+        .filter(a => a.statut === 'Rejected' || a.statut === 'Rejeté')
+        .pop();
+      if (rejet?.commentaire) return rejet.commentaire;
+    }
+
+    return 'Aucun motif précisé.';
   }
 }
