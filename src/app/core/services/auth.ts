@@ -6,55 +6,63 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  // L'URL exacte de ton contrôleur d'authentification .NET
   private apiUrl = 'http://localhost:5111/api/auth';
 
-  // Injection de HttpClient obligatoire pour communiquer avec le backend
   constructor(private http: HttpClient) { }
 
-  // Envoie la demande de connexion au serveur
   login(email: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, { email, password });
   }
 
-  // AJOUT : Envoie les données d'inscription au contrôleur .NET (Route: api/auth/signup)
   signUp(userModel: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/signup`, userModel);
   }
 
-  // Sauvegarder le token et les infos utilisateur après un login réussi
   saveSession(token: string, user: any): void {
     localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user)); // Transformation de l'objet en chaîne de caractères
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
-  // Gère aussi un retour backend qui fournit accessToken au lieu de token
   saveSessionFromResponse(response: any): void {
     const token = response?.token || response?.accessToken || response?.jwt || null;
-    const user = response?.user || response?.payload || null;
+    const user = response?.user || response?.payload || response || null;
 
     if (token) {
       this.saveSession(token, user);
     }
   }
 
-  // Récupérer le précieux token pour ton jwtInterceptor
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  // Vérifier si l'utilisateur est connecté (utilisé par ton authGuard)
   isLoggedIn(): boolean {
     return this.getToken() !== null;
   }
 
-  // Récupérer les données de l'utilisateur connecté
   getUserData(): any {
     const userJson = localStorage.getItem('user');
     return userJson ? JSON.parse(userJson) : null;
   }
 
-  // Nettoyer le localStorage lors de la déconnexion (Respect du cahier des charges)
+  // --- MHOUM M3A L-ROLE GUARD ---
+
+  // 1. Récupérer le rôle direct mel user object fi localStorage
+  getUserRole(): string | null {
+    const user = this.getUserData();
+    // Thabbet fi backend mte3ek (role, Role, userRole...)
+    return user?.role || user?.Role || user?.userRole || null; 
+  }
+
+  // 2. Méthode pour vérifier si l'utilisateur a un rôle spécifique
+  hasRole(requiredRole: string): boolean {
+    const role = this.getUserRole();
+    if (!role) return false;
+    
+    // Comparaison case-insensitive (Manager == manager)
+    return role.toLowerCase() === requiredRole.toLowerCase();
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

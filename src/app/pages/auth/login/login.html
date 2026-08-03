@@ -15,7 +15,8 @@
     </div>
 
     <!-- Message d'erreur -->
-    <div *ngIf="errorMessage" class="alert alert-danger">
+    <div *ngIf="errorMessage" class="alert alert-danger text-center alert-dismissible fade show">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
       {{ errorMessage }}
     </div>
 
@@ -23,13 +24,11 @@
 
       <!-- Email -->
       <div class="mb-3">
-
         <label class="form-label fw-semibold">
           Adresse Email
         </label>
 
         <div class="input-group">
-
           <span class="input-group-text">
             <i class="bi bi-envelope"></i>
           </span>
@@ -37,108 +36,73 @@
           <input
             type="email"
             class="form-control"
-
             name="email"
-
             [(ngModel)]="credentials.email"
-
+            (input)="errorMessage = ''"
             #emailRef="ngModel"
-
             required
-
             email
-
             placeholder="nom@entreprise.com">
-
         </div>
 
         <small
           class="text-danger"
-
           *ngIf="emailRef.invalid && (emailRef.dirty || emailRef.touched)">
-
           Adresse email valide obligatoire.
-
         </small>
-
       </div>
 
       <!-- Password -->
-
       <div class="mb-4">
-
         <label class="form-label fw-semibold">
           Mot de passe
         </label>
 
         <div class="input-group">
-
           <span class="input-group-text">
-
             <i class="bi bi-lock-fill"></i>
-
           </span>
 
           <input
-
             type="password"
-
             class="form-control"
-
             name="password"
-
             [(ngModel)]="credentials.password"
-
+            (input)="errorMessage = ''"
             #passRef="ngModel"
-
             required
-
             placeholder="********">
-
         </div>
 
         <small
-
           class="text-danger"
-
           *ngIf="passRef.invalid && (passRef.dirty || passRef.touched)">
-
           Le mot de passe est obligatoire.
-
         </small>
-
       </div>
 
+      <!-- Submit Button -->
       <button
-
-        class="btn btn-success login-btn"
-
+        class="btn btn-success login-btn w-100"
         type="submit"
-
-        [disabled]="loginForm.invalid">
-
-        <i class="bi bi-box-arrow-in-right me-2"></i>
-
-        Se connecter
-
+        [disabled]="loginForm.invalid || loading">
+        
+        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+        <i *ngIf="!loading" class="bi bi-box-arrow-in-right me-2"></i>
+        
+        {{ loading ? 'Connexion en cours...' : 'Se connecter' }}
       </button>
 
       <hr>
 
       <div class="text-center">
-
-        <span class="text-muted">
-
+        <span class="text-muted me-1">
           Vous n'avez pas de compte ?
-
         </span>
 
-        <a routerLink="/signup" class="register-link">
-
+        <a routerLink="/signup" class="register-link fw-bold">
           Créer un compte
-
         </a>
-
       </div>
 
     </form>

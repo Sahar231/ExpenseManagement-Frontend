@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FraisService } from '../../../core/services/frais';
@@ -10,7 +10,7 @@ import { FraisService } from '../../../core/services/frais';
   templateUrl: './validation.html',
   styleUrls: ['./validation.css']
 })
-export class ValidationComponent implements OnInit {
+export class ValidationComponent implements OnInit, OnDestroy {
   fraisAValider: any[] = [];
   fraisA: any[] = [];
   fraisEnCoursDeRejet: number | null = null;
@@ -19,16 +19,39 @@ export class ValidationComponent implements OnInit {
   critereTri: string = 'date-desc';
   filtreStatutPill: string = 'ALL'; // Var lil filter pills
 
+  // --- ALERTE BANNER ---
+  successMessage: string | null = null;
+  private alertTimeout: any;
+
   constructor(private fraisService: FraisService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.chargerFrais();
   }
 
+  ngOnDestroy(): void {
+    if (this.alertTimeout) {
+      clearTimeout(this.alertTimeout);
+    }
+  }
+
+  // Helper bāsh t-affichi al-bandeau d'alerte
+  afficherSucces(msg: string): void {
+    this.successMessage = msg;
+    if (this.alertTimeout) {
+      clearTimeout(this.alertTimeout);
+    }
+    this.alertTimeout = setTimeout(() => {
+      this.successMessage = null;
+      this.cdr.detectChanges();
+    }, 3500);
+  }
+
+  // --- CHARGEMENT DES DONNÉES ---
   chargerFrais(): void {
     this.fraisService.getFraisAValider().subscribe({
       next: (data: any[]) => {
-        this.fraisAValider = data;
+        this.fraisAValider = data || [];
         this.filtrerEtTrier();
         this.cdr.detectChanges();
       }
@@ -75,8 +98,12 @@ export class ValidationComponent implements OnInit {
     });
   }
 
+  // --- ACTIONS MANAGER ---
   approuver(id: number): void {
-    this.fraisService.approuverFrais(id).subscribe(() => this.chargerFrais());
+    this.fraisService.approuverFrais(id).subscribe(() => {
+      this.chargerFrais();
+      this.afficherSucces('✅ La note de frais a été approuvée avec succès !');
+    });
   }
 
   rejeter(id: number): void {
@@ -89,6 +116,7 @@ export class ValidationComponent implements OnInit {
     this.fraisService.rejeterFrais(this.fraisEnCoursDeRejet!, this.motif).subscribe(() => {
       this.chargerFrais();
       this.annulerRejet();
+      this.afficherSucces('❌ La note de frais a été rejetée.');
     });
   }
 
