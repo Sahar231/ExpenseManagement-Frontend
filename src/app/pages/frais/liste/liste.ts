@@ -48,6 +48,7 @@ export class ListeComponent implements OnInit, OnDestroy {
   // Filtres
   fraisRecherche: string = '';
   statutFiltre: string = '';
+  todayDate: string = new Date().toISOString().split('T')[0];
 
   // Options de tri
   sortOption: string = 'date-desc';
@@ -61,6 +62,10 @@ export class ListeComponent implements OnInit, OnDestroy {
   fraisToEdit: Partial<FraisItem> = {};
   idToDelete: number | null = null;
   selectedFrais: FraisItem | null = null;
+
+  // --- ALERTE DE SUCCÈS SIMPLE ---
+  successMessage: string | null = null;
+  private alertTimeout: any;
 
   private lastActiveElement: HTMLElement | null = null;
   private modalHiddenListener: (() => void) | null = null;
@@ -81,6 +86,21 @@ export class ListeComponent implements OnInit, OnDestroy {
     if (element && this.modalHiddenListener) {
       element.removeEventListener('hidden.bs.modal', this.modalHiddenListener);
     }
+    if (this.alertTimeout) {
+      clearTimeout(this.alertTimeout);
+    }
+  }
+
+  // --- HELPER ALERTE SUCCÈS ---
+  afficherSucces(msg: string): void {
+    this.successMessage = msg;
+    if (this.alertTimeout) {
+      clearTimeout(this.alertTimeout);
+    }
+    this.alertTimeout = setTimeout(() => {
+      this.successMessage = null;
+      this.cdr.detectChanges();
+    }, 3500);
   }
 
   // --- CHARGEMENT DES DONNÉES ---
@@ -216,7 +236,10 @@ export class ListeComponent implements OnInit, OnDestroy {
   }
 
   modifier(f: FraisItem): void {
-    this.fraisToEdit = { ...f };
+    this.fraisToEdit = { 
+      ...f,
+      date: f.date ? new Date(f.date).toISOString().split('T')[0] : ''
+    };
     this.showModal('editModal');
   }
 
@@ -242,6 +265,7 @@ export class ListeComponent implements OnInit, OnDestroy {
     this.fraisService.creerFrais(this.fraisToCreate).subscribe(() => {
       this.chargerFrais();
       this.hideModal('createModal');
+      this.afficherSucces('🎉 Note de frais ajoutée avec succès !');
     });
   }
 
@@ -250,12 +274,16 @@ export class ListeComponent implements OnInit, OnDestroy {
       this.fraisService.modifier(this.fraisToEdit.id, this.fraisToEdit).subscribe(() => {
         this.chargerFrais();
         this.hideModal('editModal');
+        this.afficherSucces('✏️ Note de frais mise à jour avec succès !');
       });
     }
   }
 
   soumettre(id: number): void {
-    this.fraisService.soumettre(id).subscribe(() => this.chargerFrais());
+    this.fraisService.soumettre(id).subscribe(() => {
+      this.chargerFrais();
+      this.afficherSucces('🚀 Note de frais soumise avec succès !');
+    });
   }
 
   confirmDelete(): void {
@@ -263,6 +291,7 @@ export class ListeComponent implements OnInit, OnDestroy {
       this.fraisService.supprimer(this.idToDelete).subscribe(() => {
         this.chargerFrais();
         this.hideModal('deleteModal');
+        this.afficherSucces('🗑️ Note de frais supprimée avec succès !');
       });
     }
   }

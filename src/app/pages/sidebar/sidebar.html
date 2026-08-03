@@ -3,87 +3,66 @@
   <!-- Sidebar -->
   <aside class="sidebar">
 
-   
-
-
     <!-- Profil -->
     <div class="profile-section">
-
       <div class="avatar">
         <i class="bi bi-person-fill"></i>
       </div>
-
       <h6 class="username">
         {{ userName || 'Utilisateur' }}
       </h6>
-
       <span class="badge-role">
         {{ userRole }}
       </span>
-
     </div>
 
     <!-- Menu -->
     <nav class="menu">
 
       <a
-        routerLink="/sidebar/tableau-de-bord"
+        routerLink="/tableau-de-bord"
         routerLinkActive="active"
         class="menu-item">
-
         <i class="bi bi-house-door-fill"></i>
         <span>Tableau de bord</span>
-
       </a>
 
       <a
-        routerLink="/sidebar/frais/liste"
+        routerLink="/frais/liste"
         routerLinkActive="active"
         class="menu-item">
-
         <i class="bi bi-wallet2"></i>
         <span>Expenses</span>
-
       </a>
 
       <a
         *ngIf="userRole === 'Manager'"
-        routerLink="/sidebar/frais/validation"
+        routerLink="/frais/validation"
         routerLinkActive="active"
         class="menu-item">
-
         <i class="bi bi-check2-circle"></i>
         <span>Validation</span>
-
       </a>
 
     </nav>
 
     <!-- Logout -->
     <div class="logout">
-
       <button
         class="logout-btn"
         (click)="onLogout()">
-
         <i class="bi bi-box-arrow-left"></i>
-
         <span>Log Out</span>
-
       </button>
-
     </div>
 
   </aside>
 
   <!-- Contenu -->
   <main class="content">
-
-    
     <div class="page-content">
       <router-outlet></router-outlet>
     </div>
-
   </main>
 
 </div>

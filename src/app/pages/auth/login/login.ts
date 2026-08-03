@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, NgZone } from '@angular/core'; // 👈 1. Imports
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -16,30 +16,36 @@ export class LoginComponent {
   errorMessage = '';
   loading = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  // 👈 2. Injecter ChangeDetectorRef (cdr) + NgZone (zone)
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
+  ) {}
 
-  // Cette méthode correspond exactement au (ngSubmit)="onSubmit(loginForm)" de ton HTML
   onSubmit(form: NgForm) {
     if (form.invalid) return;
 
     this.loading = true;
     this.errorMessage = '';
 
-    // Appel du service d'authentification
     this.authService.login(this.credentials.email, this.credentials.password).subscribe({
       next: (response: any) => {
-        this.loading = false;
-
-        // ÉTAPE CRUCIALE : On sauvegarde le Token JWT et les infos de l'utilisateur reçus du Backend .NET
-        this.authService.saveSessionFromResponse(response);
-
-        // Redirection vers le formulaire de création (La route enfant exacte configurée dans app.routes.ts)
-        this.router.navigate(['/sidebar/tableau-de-bord']);
+        this.zone.run(() => {
+          this.loading = false;
+          this.authService.saveSessionFromResponse(response);
+          this.router.navigate(['/tableau-de-bord']);
+          this.cdr.detectChanges(); // ⚡ Force update DOM
+        });
       },
       error: (err) => {
-        this.loading = false;
-        // Affichage du message d'erreur retourné par le backend ou message générique
-        this.errorMessage = err.error?.message || "Identifiants incorrects ou problème de connexion au serveur.";
+       
+        this.zone.run(() => {
+          this.loading = false;
+          this.errorMessage = err.error?.message || "Email ou mot de passe incorrect.";
+          this.cdr.detectChanges();
+        });
       }
     });
   }
